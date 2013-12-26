@@ -1,0 +1,10 @@
+class: "Grenadier"
+isadmin: false
+kills: 0
+deaths: 0
+assists: 0
+wins: 0
+losses: 0
+ties: 0
+xp: 0
+killstreak: 0

@@ -1,0 +1,27 @@
+#--------------------------
+# [FPSCaste] config.yml
+# -------------------------
+# Config for the FPSCaste plugin.
+
+broadcastTimes:
+- 10m
+- 5m
+- 2m
+- 1m
+- 30s
+- 10s
+- 5s
+- 3s
+- 2s
+- 1s
+startingMatches: 1
+switchWaidTime: 10
+killstreakrewards: 3
+allowedCommands:
+- seen
+- whois
+- help
+enabledperks:
+- perk1
+- perk2
+- perk3

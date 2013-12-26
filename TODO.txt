@@ -1,0 +1,66 @@
+Alpha:
+- fix tab list V
+  * Player - k /d - as / p
+  * ------ - time - -------
+  * Team players              all ffa players
+  * green -----------------   Red -----------
+  * enemy players             spectators
+  * Red -------------------
+  * spectators
+  
+- Fix grenades displaying correct      V
+- Make stuns have the correct damage   V
+- Implement level system (!) V
+- Make last location & inventory compatible V --> a flaw with reboot
+- no other commands but FPSCaste, or defined V
+- timelimit team with most points win V, except matchbonus V
+ 	playerScore = int( (winnerScale * ((gameLength/60) * spm))*(player.timePlayed["total"] / gameLength) );
+ 	WinnerScale is the multiplier of a win (1x), loss (0.5x), or tie (0.75x).
+	GameLength is seconds, so divided by 60, it would scale to minutes. It has a limit of twenty minutes, a match that goes longer than that won't get any more bonus than twenty.
+	
+	SPM is a measurement based on the player's Rank.
+	It uses a really odd equation. The rank multiplied by 0.61 and then adds 1.
+	It then takes THAT number, cuts it in half and then adds another 3.
+	
+	TimePlayed is seconds played, and it is divided by the GameLength. Basically if you are in the server when the match starts and play through to the end, you get 1.
+	
+	total x 10
+- implement fpscaste command prefix V
+- Add chat channel all, match and team V
+
+
+Bugs:
+Stop when no servers -> nullpointer V
+isEnemyTo(935) nullpointer on nametagreceiveevent V
+
+----------------------------
+
+Beta:
+- Implement zooming V
+- Make CTF and DEM
+- Start basic killstreak system
+- create system for tasks using boss health V
+- Create running system V
+- Start weapon rewrite V
+- final fix on inventory/teleport
+
+Bugs: 
+- Fix tab list
+- fix inventory saving, again. V
+
+Full release:
+- Create health regen system
+- Complete Weapon rewrite V
+- Make classes including perks and killstreaks V
+- Finish killstreaks
+
+1.1:
+- Create a class
+
+
+Donor:
+- Flaming/particles head/player
+- An additional create a class
+
+
+  

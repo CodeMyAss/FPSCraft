@@ -1,0 +1,80 @@
+main: net.castegaming.plugins.FPSCaste.FPSCaste
+name: FPSCaste
+version: 0.2
+author : kwek20
+description: Call of Duty re-created just for minecraft!
+website: www.castegaming.net
+depend: [Multiverse-Core]
+
+commands:
+  FPSCaste:
+    description: A backup for any of the commands this plugin has
+    usage: Typ /fpscaste [command] [args] to execute that command 
+  FPS:
+    description: A backup for any of the commands this plugin has
+    usage: Typ /fpscaste [command] [args] to execute that command 
+  join:
+    description: Lets you join a new match
+    usage: Typ /join to join a match
+  leave:
+    description: Lets you leave a match
+    usage: Typ /leave to leave a match
+  showgames:
+    description: Shows the games info
+    usage: Typ /showgames to see info
+  allies:
+    description: Joins the allies!
+    usage: Typ /allies  to join the allies team
+  axis:
+    description: Joins team axis!
+    usage: Typ /axis to join the axis team
+  stopgame:
+    description: Stops the current game, or game defined
+    usage: Typ /stopgame [gameID]
+  setadmin:
+    description: Toggles a player his admin state
+    usage: Typ /setadmin [name] [true/false]
+  all:
+    description: Send messages to the entire match
+    usage: Typ /all
+  team:
+    description: Send messages to jsut your team
+    usage: Typ /team
+  respawn:
+    description: Adds a death and respawns you
+    usage: Typ /respawn to respawn
+  newmap:
+    description: Creates a new map!
+    usage: Typ /newmap [maptype] while standing at the join spot (glass cage)
+    aliases: [nm]
+  buildingmode:
+    description: Toggles building mode (Alias /buildmode)
+    usage: Typ /buildingmode [player] to toggle his buildingmode
+  buildmode:
+    description: Toggles building mode (Alias /buildingmode)
+    usage: Typ /buildmode [player] to toggle his buildingmode
+    aliases: [buildingmode]
+  stats:
+    description: Shows your stats
+    usage: Typ /stats [name] to see your stats.
+  class:
+    description: Changes your class
+    usage: Typ /class [classname] change your class!
+    aliases: [clas]
+  createmap:
+    description: Creates a new map preset on your location with the name provided
+    usage: Typ /createmap [name] to create a map with the main spawn on your location.
+    aliases: [cm, cmap, createm]
+  editmap:
+    description: Lets you edit the preset currently selected
+    usage: Typ /editmap [value] to edit, or nothing to see whats left.
+    aliases: [em, emap, editm]
+  chat:
+    description: changes your chat mode
+    usage: Typ /chat to toggle to the next, or /chat [value] to selct that one
+  ch:
+    description: changes your chat mode
+    usage: Typ /ch to toggle to the next, or /ch [value] to selct that one
+  channel:
+    description: changes your chat mode
+    usage: Typ /channel to toggle to the next, or /channel [value] to selct that one

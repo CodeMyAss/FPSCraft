@@ -1,0 +1,54 @@
+Grenadier:
+ weapons:
+  Famas: ["Grenade launcher"]
+  Spas_12: ["Silencer"]
+ equipment: Grenade
+ special: Stun
+ perks: ["Scavenger", "Stopping Power", "Commando"]
+ deathstreak: Copycat
+ level: 1 
+ killstreaks: ["Uav","Counter-uav","Predator"]
+
+First Recon:
+ weapons:
+  Ump45: ["Holographic"]
+  .44_Magnum: ["Knife"]
+ equipment: Semtex
+ special: Flash
+ perks: ["Marathon", "Lightweight", "Steady Aim"]
+ deathstreak: Copycat
+ level: 1
+ killstreaks: ["Uav","Counter-uav","Predator"]
+ 
+Overwatch:
+ weapons:
+  L86_lsw: ["Red dot", "Grip"]
+  AT4: []
+ equipment: Semtex
+ special: Flash
+ perks: ["Bling", "Stopping Power", "Steady Aim"]
+ deathstreak: Painkiller
+ level: 1
+ killstreaks: ["Uav","Counter-uav","Predator"]
+ 
+Scout Sniper:
+ weapons:
+  Barrett .50 cal: ["Hearthbeat", "FMJ"]
+  Usp .45: ["Silencer"]
+ equipment: Tactical Insertion
+ special: Smoke
+ perks: ["Sleight of Hand", "Coldblooded", "Scrambler"]
+ deathstreak: Copycat
+ level: 2
+ killstreaks: ["Uav","Counter-uav","Predator"]
+ 
+Riot Control:
+ weapons:
+  Riot_Shield: []
+  PP2000: ["Red dot"]
+ equipment: Blast Shield
+ special: Stun
+ perks: ["Marathon", "Hardline", "Commando"]
+ deathstreak: Painkiller Deathstreak
+ level: 3
+ killstreaks: ["Uav","Counter-uav","Predator"]

@@ -1,0 +1,16 @@
+kill_tdm: 100
+kill_dom: 50
+death: 0
+assist: 20
+headshot: 50
+first_blood: 100
+payback: 50
+flag_grab: 50
+flag_return: 50
+flag_capture: 250
+capture_neutral: 100
+capture_enemy: 150
+capture_assist: 100
+avenge: 20
+buzzkill: 100
+
