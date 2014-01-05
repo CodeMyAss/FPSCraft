@@ -307,7 +307,6 @@ public class MapPreset {
 	}
 	
 	public static boolean exists(String map){
-		if (presets.containsKey(map)) return true;
-		return false;
+		return presets.containsKey(map);
 	}
 }

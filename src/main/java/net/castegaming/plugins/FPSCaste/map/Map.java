@@ -30,6 +30,35 @@ public class Map {
 	 */
 	public static LinkedList<Integer> mapAvailable = new LinkedList<Integer>();
 	
+	/**
+	 * Checks if a certain map is avaiable<br/>
+	 * If there is one, this returns the mapID, otherwise -1
+	 * @param mapname
+	 * @return 
+	 */
+	public static Integer isMapAvailable(String mapname) {
+		for (Integer i : mapAvailable){
+			if (maps.get(i).getMapName().equals(mapname)) return i;
+		}
+		return -1;
+	}
+	
+	/**
+	 * Adds a map to the available list
+	 * @param mapID
+	 */
+	public static void addAvailable(int mapID) {
+		if (maps.containsKey(mapID)) mapAvailable.add(mapID);
+	}
+
+	/**
+	 * Removes a mapID from the available list
+	 * @param mapID
+	 */
+	public static void removeAvailable(int mapID) {
+		mapAvailable.remove(mapAvailable.indexOf(mapID));
+	}
+	
 	//private boolean inUse = false;
 	private int mapID;
 	private String mapName;

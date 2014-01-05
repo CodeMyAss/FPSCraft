@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import net.castegaming.plugins.mcadmindev.killstreaks.Killstreaks;
-import net.castegaming.plugins.mcadmindev.killstreaks.gui.NameSelector;
+import net.castegaming.plugins.FPSCaste.FPSCaste;
+import net.castegaming.plugins.FPSCaste.killstreaks.gui.NameSelector;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -89,12 +89,12 @@ public class Nuke extends Killstreak implements Listener{
 					if (player != null){
 						if (damage(p, player, DamageCause.ENTITY_EXPLOSION, damage)){
 							player.getWorld().createExplosion(player.getLocation().getX(), player.getLocation().getY(), player.getLocation().getZ(), 0, false, false);
-							player.sendMessage(Killstreaks.prefix + "You have been nuked by " + p.getName());
+							FPSCaste.badMsg(player, "You have been nuked by " + p.getName());
 						}
 					}
 				}
 			} else {
-				p.sendMessage(Killstreaks.prefix + "Please select " + amount + " " +  (amount > 1 ? "players" : "player") + " to nuke!");
+				FPSCaste.badMsg(p, "Please select " + amount + " " +  (amount > 1 ? "players" : "player") + " to nuke!");
 			}
 			
 			nukers.remove(e.getPlayer().getName());

@@ -1,6 +1,7 @@
 package net.castegaming.plugins.FPSCaste.config;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +14,7 @@ import net.castegaming.plugins.FPSCaste.Match;
 import net.castegaming.plugins.FPSCaste.enums.GunClass;
 import net.castegaming.plugins.FPSCaste.enums.Points;
 import net.castegaming.plugins.FPSCaste.enums.Rank;
+import net.castegaming.plugins.FPSCaste.gamemodes.playlist.PlayList;
 import net.castegaming.plugins.FPSCaste.listener.RestListener;
 import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Gun;
@@ -26,26 +28,23 @@ public class RegisterConfigs {
 	public RegisterConfigs(FPSCaste plugin){
 		this.plugin = plugin;
 		register();
+		checkConfig();
 		loadConfigValues();
 		setBroadCastTimes();
 		loadRanks();
+		loadPlayLists();
 		loadWeapons();
 		loadDefaultClasses();
 		Points.load();
 	}
-	
-	private void loadWeapons() {
-		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 5, 1.0, 1, new HashMap<String, Object>());
-		new InitWeapons(plugin);
-	}
-	
+
 	private void register(){
 		if (Config.getConfig("config") == null){
 			plugin.saveDefaultConfig();
 			FPSCaste.log("Created config.yml!", Level.INFO);
 		}
 		
-		String[] configsStrings = {"maps", "defaultplayer", "points", "ranks", "defaultclasses"};
+		String[] configsStrings = {"maps", "defaultplayer", "points", "ranks", "defaultclasses", "playlists"};
 		String[] folderStrings = {"players", "maps", "weapons"};
 		
 		for (String s : configsStrings){
@@ -63,12 +62,52 @@ public class RegisterConfigs {
 		}
 	}
 	
-	private void loadDefaultClasses() {
-		YamlConfiguration classes = Config.getConfig("defaultclasses");
-		for (String classname : classes.getKeys(false)){
-			new PlayerClass(classname);
-			FPSCaste.log("Created default class: " + classname);
+	/**
+	 * Checks the config for possible mistakes or needed updates.
+	 */
+	public void checkConfig(){
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(plugin.getResource("config.yml"));
+		YamlConfiguration fconfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder() + File.separator + "config.yml"));
+		
+		boolean save = false;
+		for (String key : config.getKeys(true)){
+			if (!fconfig.contains(key)){
+				plugin.getConfig().set(key, config.get(key));
+				FPSCaste.log("Added the config value: " + key);
+				save = true;
+			}
 		}
+		if (save) plugin.saveConfig();
+	}
+	
+	private void loadConfigValues() {
+		Match.switchWaidTime = plugin.getConfig().getInt("switchWaidTime", -1);
+		RestListener.allowedCommands = plugin.getConfig().getStringList("allowedCommands");
+	}
+	
+	private void setBroadCastTimes() {
+		List<String> list = plugin.getConfig().getStringList("broadcastTimes");
+		List<Integer> ints = new LinkedList<Integer>();
+		for (String string : list){
+			String intString = string.substring(0, string.length() - 1);
+			int number;
+			try {
+				if (string.endsWith("s")){
+					number = Integer.parseInt(intString)*20;
+					
+				} else if (string.endsWith("m")){
+					number = Integer.parseInt(intString)*60*20;
+				} else {
+					number = 0;
+					FPSCaste.log(string + " has no correct time modifier! (m, s) Check broadcastTimes in your config ", Level.WARNING);
+				}
+				if (number > 0)
+					ints.add(ints.size(), number);
+			} catch (NumberFormatException e){
+				FPSCaste.log(string + " is no valid number! Check broadcastTimes in your config ", Level.WARNING);
+			}
+		}
+		Match.broadCastValues = ints;
 	}
 	
 	private void loadRanks(){
@@ -91,51 +130,44 @@ public class RegisterConfigs {
 		}
 	}
 	
-	private void loadConfigValues() {
-		try {
-			Match.switchWaidTime = plugin.getConfig().getInt("switchWaidTime");
-		} catch (Exception e){
-			Match.switchWaidTime = 10;
-			FPSCaste.log("Created the switchWaidTime config node!", Level.INFO);
-			plugin.getConfig().set("switchWaidTime", 10);
-			plugin.saveConfig();
+	/**
+	 * 
+	 */
+	private void loadPlayLists() {
+		YamlConfiguration lists = Config.getConfig("playlist");
+		boolean save = false;
+		for (String list : lists.getKeys(false)){
+			if (!lists.contains(list + ".options")){
+				FPSCaste.log("playlist " + list + " does not have options defined!" );
+				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[]{"TDM", "MAPNAMEHEREs"})));
+				save = true;
+				continue;
+			}
+			
+			Boolean random = (Boolean) lists.get(list + ".random", null);
+			if (random == null){
+				lists.set(list + ".random", false);
+				save = true;
+				random = false;
+			}
+			 new PlayList(list, lists.getStringList(list + ".options"), random, true);
+			 FPSCaste.log("Loaded playlist: " + list);
 		}
 		
-		try {
-			RestListener.allowedCommands = plugin.getConfig().getStringList("allowedCommands");
-		} catch (Exception e){
-			RestListener.allowedCommands = new LinkedList<String>();
-			FPSCaste.log("Created the allowedCommands config node!", Level.INFO);
-			plugin.getConfig().set("allowedCommands", new String[]{"seen", "whois", "help"});
-			plugin.saveConfig();
-		}
-		
-		PlayerClass.maxAllowedKillstreaks = plugin.getConfig().getInt("killstreakrewards", 3);
+		if (save) Config.saveConfig("playlist", lists);
 	}
 	
-	private void setBroadCastTimes() {
-		List<String> list = plugin.getConfig().getStringList("broadcastTimes");
-		List<Integer> ints = new LinkedList<Integer>();
-		for (String string : list){
-			String intString = string.substring(0, string.length() - 1);
-			int number;
-			try {
-				if (string.endsWith("s")){
-					number = Integer.parseInt(intString)*20;
-					
-				} else if (string.endsWith("m")){
-					number = Integer.parseInt(intString)*60*20;
-				} else {
-					number = 0;
-					FPSCaste.log(FPSCaste.NamePrefix + string + " has no correct time modifier! (m, s) Check broadcastTimes in your config ", Level.WARNING);
-				}
-				if (number > 0)
-					ints.add(ints.size(), number);
-			} catch (NumberFormatException e){
-				FPSCaste.log(FPSCaste.NamePrefix + string + " is no valid number! Check broadcastTimes in your config ", Level.WARNING);
-			}
+	private void loadWeapons() {
+		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 5, 1.0, 1, new HashMap<String, Object>());
+		new InitWeapons(plugin);
+	}
+	
+	private void loadDefaultClasses() {
+		YamlConfiguration classes = Config.getConfig("defaultclasses");
+		for (String classname : classes.getKeys(false)){
+			new PlayerClass(classname);
+			FPSCaste.log("Created default class: " + classname);
 		}
-		Match.broadCastValues = ints;
 	}
 	
 	private boolean isInt(String number){

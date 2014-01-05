@@ -4,7 +4,9 @@ import java.util.Random;
 import java.util.logging.Level;
 
 import net.castegaming.plugins.FPSCaste.commands.FPSCasteCommandHandler;
+import net.castegaming.plugins.FPSCaste.config.Config;
 import net.castegaming.plugins.FPSCaste.config.RegisterConfigs;
+import net.castegaming.plugins.FPSCaste.gamemodes.playlist.PlayList;
 import net.castegaming.plugins.FPSCaste.listener.ConnectionListener;
 import net.castegaming.plugins.FPSCaste.listener.DeathListener;
 import net.castegaming.plugins.FPSCaste.listener.EntityDamageListener;
@@ -20,6 +22,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -90,15 +94,7 @@ public class FPSCaste extends JavaPlugin{
 			//registers all the maps available
 			new initMaps();
 			
-			int amount = getConfig().getInt("startingMatches", 1);
-			while (amount > 0){
-				amount--;
-				if (FPSCaste.randomMap() > 0){
-					log("Created match: " + new Match());
-				} else {
-					amount = 0;
-				}
-			}
+			loadMatches();
 			
 			if (getServer().getOnlinePlayers().length > 0){
 				log("Parsing all online players!");
@@ -106,20 +102,16 @@ public class FPSCaste extends JavaPlugin{
 					new FPSPlayer(p.getName());
 				}
 			}
-			
+
 			PluginManager PM = Bukkit.getServer().getPluginManager();
-			PM.registerEvents(new ConnectionListener(this), this);
-			PM.registerEvents(new DeathListener(this), this);
-			PM.registerEvents(new EntityDamageListener(this), this);
-			PM.registerEvents(new ItemListener(this), this);
-			PM.registerEvents(new PlayerListener(this), this);
-			PM.registerEvents(new RestListener(this), this);
+			registerListeners(PM);
 			
 			if (getServer().getPluginManager().getPlugin("TagAPI") != null){
 				PM.registerEvents(new ProtocolListener(this), this);
 			} else {
 				log(ChatColor.DARK_RED + "TagAPI has not been found!/n" + ChatColor.DARK_RED + "Disabling team colored name tags", Level.WARNING);
 			}
+			
 			if (getServer().getPluginManager().getPlugin("TabAPI") == null){
 				log(ChatColor.DARK_RED + "TabAPI has not been found!/n" + ChatColor.DARK_RED + "Disabling tab playerlist", Level.WARNING);
 			}
@@ -143,6 +135,39 @@ public class FPSCaste extends JavaPlugin{
 				FPSCaste.log("Stopped match " + match + " becasuse of a reboot/stop", Level.INFO);
 				FPSCaste.getMatch(match).endGame("The game has ended becauase of a server restart/reload! stats saved.", false);
 			}
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	private void registerListeners(PluginManager PM) {
+		PM.registerEvents(new ConnectionListener(this), this);
+		PM.registerEvents(new DeathListener(this), this);
+		PM.registerEvents(new EntityDamageListener(this), this);
+		PM.registerEvents(new ItemListener(this), this);
+		PM.registerEvents(new PlayerListener(this), this);
+		PM.registerEvents(new RestListener(this), this);
+	}
+
+	/**
+	 * 
+	 */
+	private void loadMatches() {
+		ConfigurationSection c = getConfig().getConfigurationSection("matches");
+		for (String s : c.getKeys(false)){
+			PlayList list = PlayList.getNew(c.getString(s + "playlist"));
+			if (list == null) {
+				log("Playlist " + c.getString(s + ".playlist") + " cannot be found!");
+				continue;
+			}
+			int i = c.getInt(s + ".maxplayers", -1);
+			if (i < 0){
+				log("A startup match does not have maxplayers defined!");
+				getConfig().set("matches." + s + ".maxplayers", 16);
+				i = 16;
+			}
+			log("Created match: " + new Match(i, list));
 		}
 	}
 	

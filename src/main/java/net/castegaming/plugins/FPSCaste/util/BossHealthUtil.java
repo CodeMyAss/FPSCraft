@@ -2,10 +2,8 @@ package net.castegaming.plugins.FPSCaste.util;
  
 import java.lang.reflect.Field;
 import java.util.HashMap;
- 
 
-
-import net.castegaming.plugins.mcadmindev.killstreaks.Killstreaks;
+import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.minecraft.server.v1_7_R1.DataWatcher;
 import net.minecraft.server.v1_7_R1.EntityPlayer;
 import net.minecraft.server.v1_7_R1.Packet;
@@ -13,8 +11,6 @@ import net.minecraft.server.v1_7_R1.PacketPlayInClientCommand;
 import net.minecraft.server.v1_7_R1.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.v1_7_R1.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_7_R1.PacketPlayOutEntityMetadata;
- 
-
 
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_7_R1.entity.CraftPlayer;
@@ -189,6 +185,11 @@ public class BossHealthUtil {
 		return watcher;
 	}
 	
+	public static void displayTextBar(String text, final Player player, int health){
+		displayTextBar(text, player);
+		updateTextBar(player, text, health);
+	}
+	
 	//Other methods
 	public static void displayTextBar(String text, final Player player){
 		PacketPlayOutSpawnEntityLiving mobPacket = getMobPacket(text, player.getLocation());
@@ -204,7 +205,7 @@ public class BossHealthUtil {
 				sendPacket(player, destroyEntityPacket);
 				hasHealthBar.put(player.getName(), false);
 			}
-		}.runTaskLater(Killstreaks.getInstance(), 120L);
+		}.runTaskLater(FPSCaste.getInstance(), 120L);
 	}
 	
 	/**
@@ -269,12 +270,12 @@ public class BossHealthUtil {
 							sendPacket(player, destroyEntityPacket);
 							hasHealthBar.put(player.getName(), false);
 						}
-					}.runTaskLater(Killstreaks.getInstance(), 40L);
+					}.runTaskLater(FPSCaste.getInstance(), 40L);
 					
 					this.cancel();
 				}
 			}
-		}.runTaskTimer(Killstreaks.getInstance(), delay, delay);
+		}.runTaskTimer(FPSCaste.getInstance(), delay, delay);
 	}
 	
 	public static void displayLoadingBar(final String text, final String completeText, final Player player, final int secondsDelay, final boolean loadUp){

@@ -23,6 +23,7 @@ import net.castegaming.plugins.FPSCaste.enums.gunName;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
 import net.castegaming.plugins.FPSCaste.gamemodes.GameMode;
 import net.castegaming.plugins.FPSCaste.gamemodes.TeamDeathmatch;
+import net.castegaming.plugins.FPSCaste.gamemodes.playlist.PlayList;
 import net.castegaming.plugins.FPSCaste.map.Map;
 
 public class Match {
@@ -117,27 +118,29 @@ public class Match {
 	 * scheduler for the end time broadcast *as a fix*
 	 */
 	private int finaltime_scheduler;
+
+	private PlayList list;
 	
 	private void Tick20() {
-		for (String name : getPlayers().keySet()){
-			if (!FPSCaste.getFPSPlayer(name).getTeam().equals(teamName.SPECTATOR)){
-				FPSCaste.getFPSPlayer(name).addSecondPlaytime();
-			}
-		}
-		
 		if (mode.isFinished() && getState().equals(gameState.PLAYING)){
 			endGame(mode.EndedReason(), true);
 		} else {
+			for (String name : getPlayers().keySet()){
+				if (!FPSCaste.getFPSPlayer(name).getTeam().equals(teamName.SPECTATOR)){
+					FPSCaste.getFPSPlayer(name).addSecondPlaytime();
+				}
+			}
+			
 			mode.second(this);
+			drawScoreBoard();
+			updateTabList();
 		}
-		drawScoreBoard();
-		updateTabList();
 	}
 	
 	/**
 	 * Makes a new match, with the ID as the current highest ID +1
 	 */
-	public Match(){
+	public Match(int maxplayers, PlayList list){
 		int ID = 0;
 		
 		//gets the highest value from all the matches
@@ -149,43 +152,40 @@ public class Match {
 		
 		//Highest matchID + 1 = the new match's ID
 		matchID = ID+1;
-		
+		maxPlayers = maxplayers; 
 		currentMatches.put(matchID, this);
 		openMatches.add(matchID);
 		
+		this.list = list;
 		newMatch();
 	}
 
 	private void newMatch(){
-		int mapID = FPSCaste.randomMap();
-		
-		if (mapID < 0 && this.mapID >= 0){
-			broadcast("Keeping the same map because we have not found an available map!");
-		} else if (this.mapID >= 0){
-			Map.mapAvailable.add(this.mapID);
-			this.mapID = mapID;
+		if (list == null){
+			//keep same map?
 		} else {
-			this.mapID = mapID;
+			list.next();
+			String mapname = list.getMap();
+			int mapID = Map.isMapAvailable(mapname);
+			if(mapID >= 0){
+				//set new map
+				Map.addAvailable(this.mapID);
+				Map.removeAvailable(mapID);
+				this.mapID = mapID;
+				broadcast("Switching to a new map! (" + getMap().getMapName() + ")");
+			} else {
+				if (this.mapID >= 0){
+					//same map
+					broadcast("Keeping the same map because we have not found an available map!");
+				}
+			}
+			mode = list.getMode();
+			mode.init(getMap());
 		}
 		
-		if (Map.mapAvailable.contains(this.mapID)){
-			Map.mapAvailable.remove(Map.mapAvailable.indexOf(this.mapID));
-		}
-		getMap().setMatchID(matchID);
-		
-		try {
-			mode = GameMode.random();
-		} catch (Exception e){
-			mode = new TeamDeathmatch();
-		}
-		
-		mode.reset();
-		mode.init(getMap());
 		brokenBlocks.putAll(mode.load(getMap()));
 		
 		firstKill = true;
-		
-		maxPlayers = 16;
 		currentPlayers = 0;
 		CurrentBroadCastValues = new LinkedList<Integer>(broadCastValues);
 		/*================start first scheduler====================*/
@@ -320,11 +320,10 @@ public class Match {
 				@Override
 				public void run() {
 					newMatch();
-					players.clear();
-					
 					for (String player : playerList){
 						if (Bukkit.getServer().getPlayer(player) != null && FPSCaste.getFPSPlayer(player).isIngame()){
-							FPSCaste.getFPSPlayer(player).joinMatch(matchID);
+							players.put(player, teamName.SPECTATOR);
+							FPSCaste.getFPSPlayer(player).spawn();
 						}
 					}
 				}
@@ -347,6 +346,10 @@ public class Match {
 	 */
 	public void endGame(String killer, String death) {
 		endGame("The last kill was from " + killer + ", killing " + death + ". Playtime: " + getPlayTime(), true);
+	}
+	
+	public void setPlayList(PlayList list){
+		this.list = list;
 	}
 	
 	/**

@@ -45,10 +45,6 @@ public class NewMapCommand extends FPSAdminCommand {
 			
 			new Map(args[0] ,player.getPlayer().getLocation());
 			
-			if (Match.currentMatches.size() == 0){
-				new Match();
-			}
-			
 			this.goodMsg("The map " + args[0] + " has been created!");
 			
 			return true;

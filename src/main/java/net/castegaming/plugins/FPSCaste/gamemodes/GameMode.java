@@ -35,14 +35,19 @@ public abstract class GameMode {
 	public static final Class<? extends GameMode> DOM = Domination.class;
 	public static final Class<? extends GameMode> DEM = Demolition.class;
 	
-	public static GameMode random() throws InstantiationException, IllegalAccessException {
+	public static GameMode random(){
 		List<Class<? extends GameMode>> gm = new LinkedList<Class<? extends GameMode>>();
 		//gm.add(DEM);
 		gm.add(CTF);
-		//gm.add(DOM);
-		//gm.add(FFA);
-		//gm.add(TDM);
-		return gm.get(new Random().nextInt(gm.size())).newInstance();
+		gm.add(DOM);
+		gm.add(FFA);
+		gm.add(TDM);
+		
+		try {
+			return gm.get(new Random().nextInt(gm.size())).newInstance();
+		} catch (Exception e){
+			return new TeamDeathmatch();
+		}
 	}
 	
 	/*==============================================================*/

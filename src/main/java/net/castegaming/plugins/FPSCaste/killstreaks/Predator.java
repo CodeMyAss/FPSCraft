@@ -2,11 +2,11 @@ package net.castegaming.plugins.FPSCaste.killstreaks;
 
 import java.util.HashMap;
 
-import net.castegaming.plugins.mcadmindev.killstreaks.Killstreaks;
-import net.castegaming.plugins.mcadmindev.killstreaks.enums.PredatorState;
-import net.castegaming.plugins.mcadmindev.killstreaks.gui.NameSelector;
-import net.castegaming.plugins.mcadmindev.killstreaks.util.BossHealthUtil;
-import net.castegaming.plugins.mcadmindev.killstreaks.util.Util;
+import net.castegaming.plugins.FPSCaste.FPSCaste;
+import net.castegaming.plugins.FPSCaste.enums.PredatorState;
+import net.castegaming.plugins.FPSCaste.killstreaks.gui.NameSelector;
+import net.castegaming.plugins.FPSCaste.util.BossHealthUtil;
+import net.castegaming.plugins.FPSCaste.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -145,7 +145,7 @@ public class Predator extends Killstreak{
 							
 							if ((p = Bukkit.getServer().getPlayer(ChatColor.stripColor(name))) != null){
 								if (distanceUp(p.getLocation()) >= minimumheight){
-									Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Killstreaks.getInstance(), new Runnable(){
+									Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable(){
 	
 										@SuppressWarnings("deprecation")
 										@Override
@@ -157,7 +157,7 @@ public class Predator extends Killstreak{
 													ItemStack item = items[i];
 													if (isItem(item)){
 														if (clicker.getInventory().firstEmpty() == -1){
-															clicker.sendMessage(Killstreaks.prefix + "You have no room in your inventory!");
+															FPSCaste.badMsg(clicker, "You have no room in your inventory!");
 															return;
 														}
 														
@@ -175,8 +175,8 @@ public class Predator extends Killstreak{
 											predators.put(clicker.getName(), PredatorState.TELEPORTED);
 											locations.put(clicker.getName(), clicker.getLocation());
 											
-											clicker.setMetadata("aimedplayer", new FixedMetadataValue(Killstreaks.getInstance(), name));
-											clicker.setMetadata("speed", new FixedMetadataValue(Killstreaks.getInstance(), 10));
+											clicker.setMetadata("aimedplayer", new FixedMetadataValue(FPSCaste.getInstance(), name));
+											clicker.setMetadata("speed", new FixedMetadataValue(FPSCaste.getInstance(), 10));
 											
 											BossHealthUtil.displayTextBar("Hold sneak to boost", p);
 											
@@ -186,14 +186,14 @@ public class Predator extends Killstreak{
 											clicker.teleport(l);
 											clicker.setAllowFlight(true);
 											clicker.setFlying(true);
-											clicker.sendMessage(Killstreaks.prefix + "You have been teleported " + minimumheight + " above " + name + ". Click the " + launchitem.getType().toString().toLowerCase() + " to launch! Hold sneak to boost");
+											FPSCaste.goodMsg(clicker, "You have been teleported " + minimumheight + " above " + name + ". Click the " + launchitem.getType().toString().toLowerCase() + " to launch! Hold sneak to boost");
 										}
 									});
 								} else {
-									clicker.sendMessage(Killstreaks.prefix + "This player does not have " + minimumheight + " blocks of air above him.");
+									FPSCaste.badMsg(clicker, "This player does not have " + minimumheight + " blocks of air above him.");
 								}
 							} else {
-								clicker.sendMessage(Killstreaks.prefix + "This player is no longer online!");
+								FPSCaste.badMsg(clicker, "This player is no longer online!");
 							}
 						}
 					}
@@ -249,7 +249,7 @@ public class Predator extends Killstreak{
 						
 						if (e.getPlayer().hasMetadata("boosttaskid")){
 							Bukkit.getServer().getScheduler().cancelTask(e.getPlayer().getMetadata("boosttaskid").get(0).asInt());
-							e.getPlayer().removeMetadata("boosttaskid", Killstreaks.getInstance());
+							e.getPlayer().removeMetadata("boosttaskid", FPSCaste.getInstance());
 						}
 						
 						if (teleportback){
@@ -270,8 +270,8 @@ public class Predator extends Killstreak{
 					e.getPlayer().setVelocity(new Vector(0, -vec ,0));
 				}
 			} else if (predators.get(name).equals(PredatorState.EXPLODED)){
-				p.removeMetadata("aimedplayer", Killstreaks.getInstance());
-				p.removeMetadata("speed", Killstreaks.getInstance());
+				p.removeMetadata("aimedplayer", FPSCaste.getInstance());
+				p.removeMetadata("speed", FPSCaste.getInstance());
 				predators.remove(name);
 				BossHealthUtil.sendPacket(p, BossHealthUtil.getDestroyEntityPacket());
 			}
@@ -284,25 +284,25 @@ public class Predator extends Killstreak{
 		if (predators.containsKey(name)){
 			if (predators.get(name).equals(PredatorState.FIRED)){
 				if (e.isSneaking()){
-					e.getPlayer().setMetadata("boosttaskid", new FixedMetadataValue(Killstreaks.getInstance(), new BukkitRunnable(){
+					e.getPlayer().setMetadata("boosttaskid", new FixedMetadataValue(FPSCaste.getInstance(), new BukkitRunnable(){
 						@Override
 						public void run() {
 							Player p = Bukkit.getServer().getPlayer(name);
 							if (p == null) {cancel(); return;}
-							if (!predators.containsKey(name)) {cancel(); p.removeMetadata("boosttaskid", Killstreaks.getInstance()); return;}
+							if (!predators.containsKey(name)) {cancel(); p.removeMetadata("boosttaskid", FPSCaste.getInstance()); return;}
 							
 							int speed = p.getMetadata("speed").get(0).asInt();
 							if (speed < 100){
-								p.setMetadata("speed", new FixedMetadataValue(Killstreaks.getInstance(), speed+2.5));
+								p.setMetadata("speed", new FixedMetadataValue(FPSCaste.getInstance(), speed+2.5));
 								
 								BossHealthUtil.updateTextBar(p, "Hold sneak to boost", speed);
 							} else {
 								cancel();
-								p.removeMetadata("boosttaskid", Killstreaks.getInstance());
+								p.removeMetadata("boosttaskid", FPSCaste.getInstance());
 								return;
 							}
 						}
-					}.runTaskTimer(Killstreaks.getInstance(), 0, 1).getTaskId()));
+					}.runTaskTimer(FPSCaste.getInstance(), 0, 1).getTaskId()));
 				} else {
 					if (e.getPlayer().hasMetadata("boosttaskid")){
 						int task = e.getPlayer().getMetadata("boosttaskid").get(0).asInt();

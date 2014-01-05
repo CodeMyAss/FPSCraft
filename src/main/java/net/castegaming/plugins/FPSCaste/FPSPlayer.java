@@ -608,9 +608,7 @@ public class FPSPlayer {
 	}
 	
 	public void checkPlayerClass(){
-		System.out.println("checking player class");
 		if (!config.getSelectedClass().equals(currentClass.getName())){
-			System.out.println("not equal: " + config.getSelectedClass() + " | " + currentClass.getName());
 			currentClass = new PlayerClass(player);
 		}
 	}
