@@ -10,6 +10,7 @@ import java.util.Set;
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.FPSPlayer;
 import net.castegaming.plugins.FPSCaste.Match;
+import net.castegaming.plugins.FPSCaste.enums.GameModes;
 import net.castegaming.plugins.FPSCaste.enums.Points;
 import net.castegaming.plugins.FPSCaste.enums.gameType;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
@@ -36,18 +37,7 @@ public abstract class GameMode {
 	public static final Class<? extends GameMode> DEM = Demolition.class;
 	
 	public static GameMode random(){
-		List<Class<? extends GameMode>> gm = new LinkedList<Class<? extends GameMode>>();
-		//gm.add(DEM);
-		gm.add(CTF);
-		gm.add(DOM);
-		gm.add(FFA);
-		gm.add(TDM);
-		
-		try {
-			return gm.get(new Random().nextInt(gm.size())).newInstance();
-		} catch (Exception e){
-			return new TeamDeathmatch();
-		}
+		return GameModes.values()[new Random().nextInt(GameModes.values().length-1)].getMode();
 	}
 	
 	/*==============================================================*/
