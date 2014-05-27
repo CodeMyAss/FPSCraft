@@ -66,6 +66,12 @@ public class PlayerClass {
 	
 	private int minlevel;
 	
+	/**
+	 * Loads a new {@link PlayerClass}<br/>
+	 * If there is a defaultclass with this name, a copy will be(loaded and) returned<br/>
+	 * If there exists a player with this name, His current class will be loaded
+	 * @param name
+	 */
 	public PlayerClass(String name) {
 		if (defaultClasses.containsKey(name)){
 			//do we want a new instance, to give away?

@@ -4,7 +4,7 @@ version: 0.2
 author : kwek20
 description: Call of Duty re-created just for minecraft!
 website: www.castegaming.net
-depend: [Multiverse-Core]
+depend: []
 
 commands:
   FPSCaste:

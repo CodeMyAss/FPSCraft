@@ -20,6 +20,8 @@ import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Gun;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.InitWeapons;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
+import net.castegaming.plugins.FPSCaste.util.TimeUtil;
+import net.castegaming.plugins.FPSCaste.util.Util;
 
 public class RegisterConfigs {
 	
@@ -90,20 +92,10 @@ public class RegisterConfigs {
 		List<Integer> ints = new LinkedList<Integer>();
 		for (String string : list){
 			String intString = string.substring(0, string.length() - 1);
-			int number;
-			try {
-				if (string.endsWith("s")){
-					number = Integer.parseInt(intString)*20;
-					
-				} else if (string.endsWith("m")){
-					number = Integer.parseInt(intString)*60*20;
-				} else {
-					number = 0;
-					FPSCaste.log(string + " has no correct time modifier! (m, s) Check broadcastTimes in your config ", Level.WARNING);
-				}
-				if (number > 0)
-					ints.add(ints.size(), number);
-			} catch (NumberFormatException e){
+			long number = TimeUtil.getTimeMillis(intString);
+			if (number > -1){
+					ints.add(ints.size(), (int)number/1000);
+			} else {
 				FPSCaste.log(string + " is no valid number! Check broadcastTimes in your config ", Level.WARNING);
 			}
 		}

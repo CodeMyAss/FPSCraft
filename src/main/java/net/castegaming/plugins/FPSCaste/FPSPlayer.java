@@ -20,7 +20,7 @@ import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Weapon;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
 import net.castegaming.plugins.FPSCaste.storage.PlayerStorage;
-import net.castegaming.plugins.FPSCaste.util.BossHealthUtil;
+import net.castegaming.plugins.FPSCaste.util.StatusBarAPI;
 import net.castegaming.plugins.FPSCaste.util.Util;
 
 import org.bukkit.Bukkit;
@@ -1363,7 +1363,7 @@ public class FPSPlayer {
 	 * @param time the time in ticks
 	 */
 	public void createTimer(int time, String text, String done){
-		BossHealthUtil.displayLoadingBar(text, done, getPlayer(), time, true);
+		StatusBarAPI.displayLoadingBar(text, done, getPlayer(), time, true);
 	}
 
 	/**
@@ -1379,7 +1379,7 @@ public class FPSPlayer {
 	 * @param text The text to set
 	 * @param healthPercentage the percentage to use
 	 */
-	public void createTextBar(String text, int healthPercentage) {
-		BossHealthUtil.displayTextBar(text, getPlayer(), healthPercentage);
+	public void createTextBar(String text, float healthPercentage) {
+		StatusBarAPI.setStatusBar(getPlayer(), text, healthPercentage);
 	}
 }

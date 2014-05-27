@@ -6,8 +6,11 @@ package net.castegaming.plugins.FPSCaste.playerclass.perks;
 import java.util.HashMap;
 
 /**
+ * 
+ * Project FPSCraft<br/>
+ * Class net.castegaming.plugins.FPSCaste.playerclass.perks.Perk.java<br/>
  * @author Brord
- *
+ * @since 27 mei 2014, 11:13:18
  */
 public abstract class Perk {
 	
@@ -36,7 +39,7 @@ public abstract class Perk {
 	public void onWeaponUse(){}
 
 	/**
-	 * @return the levelrequired
+	 * @return the level required
 	 */
 	public int getLevelrequired() {
 		return levelrequired;
