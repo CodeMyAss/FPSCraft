@@ -337,7 +337,7 @@ public class FPSCaste extends JavaPlugin{
 	 */
 	public static int randomMap(){
 		if (Map.mapAvailable.size() > 0){
-			int r =  new Random().nextInt(Map.mapAvailable.size());
+			int r =  new Random().nextInt(Map.mapAvailable.size()-1);
 			return Map.mapAvailable.get(r);
 		} else {
 			return -1;
@@ -351,9 +351,8 @@ public class FPSCaste extends JavaPlugin{
 	 */
 	public static int randomMatch(){
 		if (Match.openMatches.size() > 0){
-			int r =  new Random().nextInt(Match.openMatches.size());
-			int matchID = Match.openMatches.get(r);
-			return matchID;
+			int r =  new Random().nextInt(Match.openMatches.size()-1);
+			return Match.openMatches.get(r);
 		} else {
 			return -1;
 		}

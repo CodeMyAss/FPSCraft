@@ -349,7 +349,7 @@ public abstract class GameMode {
 		int mostPoints = 0;
 		teamName currentWinner = null;
 		boolean tie = false;
-		boolean scored = false;
+		//boolean scored = false;
 		Set<teamName> tieWinnersNames = new HashSet<teamName>();
 		
 		for (teamName team : points.keySet()){

@@ -1,10 +1,62 @@
 package net.castegaming.plugins.FPSCaste.util;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.inventory.ItemStack;
 
 public class Util {
+	
+	/**
+	 * @param s world:x:y:z
+	 * @return A location
+	 */
+	public static Location StringToLoc(String s) {
+		String[] splits = s.split(":");
+		int len = 5;
+		
+		if (splits.length < len) return null;
+		double[] doubles = new double[len];
+		
+		try {
+			for (int i=1; i<len; i++){
+				doubles[i-1] = Double.parseDouble(splits[i]);
+			}
+		} catch (NumberFormatException e){
+			return null;
+		}
+		return new Location(Bukkit.getServer().getWorld(splits[0]), doubles[0], doubles[1], doubles[2], (float) doubles[3], (float) doubles[4]);
+	}
+	
+	/**
+	 * Returns a formatted string for the location
+	 * @param l The location
+	 * @return a string with syntax world:x:y:z
+	 */
+	public static String toLocationString(Location l){
+		return l.getWorld().getName() + ":" + l.getX() + ":" + l.getY() + ":" + l.getZ() + ":" + l.getYaw() + ":" + l.getPitch();
+	}
+	
+	public static List<Block> blocksInRange(Location location, int maxrange){
+		Location l;
+		List<Block> blocks = new LinkedList<Block>();
+		
+		for (int x = -(maxrange); x <= maxrange; x++){
+			for (int y = -(maxrange); y <= maxrange; y++){
+				for (int z = -(maxrange); z <= maxrange; z++){
+					l = location.clone().add(x, y, z);
+					if (l.distanceSquared(location) > maxrange*maxrange) continue;
+					blocks.add(l.getBlock());
+				}
+			}
+		}
+		return blocks;
+	}
+	
 	/**
 	 * Transforms name:damage into an {@link ItemStack}
 	 * @param material the name

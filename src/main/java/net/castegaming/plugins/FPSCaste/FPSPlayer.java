@@ -19,7 +19,9 @@ import net.castegaming.plugins.FPSCaste.map.MapPreset;
 import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Weapon;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
+import net.castegaming.plugins.FPSCaste.storage.PlayerStorage;
 import net.castegaming.plugins.FPSCaste.util.BossHealthUtil;
+import net.castegaming.plugins.FPSCaste.util.Util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -139,29 +141,7 @@ public class FPSPlayer {
 
 	private MapPreset selectedMap;
 	
-	/**
-	 * Holds the location this player had when he teleported to an FPSCaste arena
-	 */
-	private Location teleportPlace;
-	
-	/**
-	 * Holds the inventory a player had when he teleported to an FPSCaste arena<br/>
-	 * 0: Contents<br/>
-	 * 1: Armour
-	 */
-	private ItemStack[][] teleportInventory = new ItemStack[2][];
-	
-	/**
-	 * Holds the other values from that a player had when he teleported to an FP SCaste arena<br/>
-	 * Saturation and EXP are x100 and then rounded to an int for easier storage<br/>
-	 * 0: Health<br/>
-	 * 1: Hunger<br/>
-	 * 2: saturation<br/>
-	 * 3: Level<br/>
-	 * 4: EXP<br/>
-	 * 5: gamemode
-	 */
-	private Double[] teleportStats;
+	private PlayerStorage storage;
 	
 	/**
 	 * Holds the channel this player is currently talking in
@@ -205,23 +185,23 @@ public class FPSPlayer {
 		
 		if (config.getConfig().contains("oldInv")){
 			//load old things, he left without his items returned.
-			teleportStats = config.getConfig().getDoubleList("oldInv.stats").toArray(new Double[6]);
+			
+			Double stats[] = config.getConfig().getDoubleList("oldInv.stats").toArray(new Double[6]);
 			
 			@SuppressWarnings("unchecked")
 			List<ItemStack> contentList = (List<ItemStack>)config.getConfig().get("oldInv.content");
 			ItemStack[] content = contentList.toArray(new ItemStack[0]);
-			teleportInventory[0] = content; 
 			
 			@SuppressWarnings("unchecked")
 			List<ItemStack> armorList = (List<ItemStack>)config.getConfig().get("oldInv.armor");
 			ItemStack[] armor = armorList.toArray(new ItemStack[0]); 
-			teleportInventory[1] = armor;
 			
 			String[] loc = config.getConfig().getStringList("oldInv.location").toArray(new String[6]);
-			teleportPlace = new Location(Bukkit.getServer().getWorld(loc[0]), Double.parseDouble(loc[1]), Double.parseDouble(loc[2]), Double.parseDouble(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
+			Location teleportPlace = new Location(Bukkit.getServer().getWorld(loc[0]), Double.parseDouble(loc[1]), Double.parseDouble(loc[2]), Double.parseDouble(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
 			config.set("oldInv", null);
 			saveConfig();
 			
+			storage = new PlayerStorage(stats, content, armor, teleportPlace);
 			returnOldThings();
 		}
 	}
@@ -333,33 +313,25 @@ public class FPSPlayer {
 		if (player != null){
 			System.out.println("!= null");
 			resetPlayerInfo();
-			player.teleport(teleportPlace);
+			player.teleport(storage.getTeleportPlace());
 			
 			player.getInventory().clear();
-			player.getInventory().setContents(teleportInventory[0]);
-			player.getInventory().setArmorContents(teleportInventory[1]);
+			player.getInventory().setContents(storage.getTeleportInventory());
+			player.getInventory().setArmorContents(storage.getTeleportArmory());
 			
-			teleportInventory = new ItemStack[2][];
-			
-			player.setHealth(teleportStats[0]);
-			player.setFoodLevel((int) Math.round((teleportStats[1])));
-			player.setSaturation(Float.parseFloat((teleportStats[2] / 100) + ""));
-			player.setLevel((int) Math.round(teleportStats[3]));
-			player.setExp(Float.parseFloat(((teleportStats[4]) / 100) + ""));
-			player.setGameMode(GameMode.getByValue((int) Math.round(teleportStats[5])));
-			
-			teleportStats = new Double[6];
+			player.setHealth(storage.getHealth());
+			player.setFoodLevel(storage.getFood());
+			player.setSaturation(storage.getSaturation());
+			player.setLevel(storage.getLevel());
+			player.setExp(storage.getExp());
+			player.setGameMode(storage.getGameMode());
 		} else {
 			System.out.println("null, wrote to config");
-			String[] loc = new String[]{teleportPlace.getWorld().getName(), teleportPlace.getX() + "", teleportPlace.getY() + "", teleportPlace.getZ()  + "", teleportPlace.getYaw() + "", teleportPlace.getPitch() + ""};
-			config.set("oldInv.content", teleportInventory[0]);
-			config.set("oldInv.armor", teleportInventory[1]);
-			config.set("oldInv.location", loc);
-			config.set("oldInv.stats", teleportStats);
+			config.set("oldInv.content", storage.getTeleportInventory());
+			config.set("oldInv.armor", storage.getTeleportArmory());
+			config.set("oldInv.location", Util.toLocationString(storage.getTeleportPlace()));
+			config.set("oldInv.stats", storage.getTeleportStats());
 			saveConfig();
-			
-			teleportStats = new Double[6];
-			teleportInventory = new ItemStack[2][];
 		}
 	}
 	
@@ -392,12 +364,7 @@ public class FPSPlayer {
 		isIngame = true;
 		
 		try {
-			teleportInventory[0] = getPlayer().getInventory().getContents();
-			teleportInventory[1] = getPlayer().getInventory().getArmorContents();
-			teleportPlace = getPlayer().getLocation();
-			teleportStats = new Double[]{getPlayer().getHealth(), (double) getPlayer().getFoodLevel(), 
-						(double) getPlayer().getSaturation(), (double) getPlayer().getLevel(), (double) getPlayer().getExp(), (double) getPlayer().getGameMode().getValue()};
-			
+			storage = new PlayerStorage(getPlayer());
 			
 			if (FPSCaste.hasTabAPI()){
 				TabAPI.setPriority(FPSCaste.getInstance(), getPlayer(), 2);

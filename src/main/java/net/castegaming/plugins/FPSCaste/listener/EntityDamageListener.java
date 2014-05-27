@@ -44,7 +44,7 @@ public class EntityDamageListener implements Listener {
 
 				    while(iterator.hasNext()) {
 				        hitBlock = iterator.next();
-				        if(hitBlock.getTypeId()!=0){
+				        if(hitBlock.getType().equals(Material.AIR)){
 				            break;
 				        }
 				    }
