@@ -34,7 +34,6 @@ public class RegisterConfigs {
 		loadConfigValues();
 		setBroadCastTimes();
 		loadRanks();
-		loadPlayLists();
 		loadWeapons();
 		loadDefaultClasses();
 		Points.load();
@@ -70,6 +69,7 @@ public class RegisterConfigs {
 	 * Checks the config for possible mistakes or needed updates.
 	 */
 	public boolean checkConfig(String configname) {
+		if (!configname.endsWith(".yml")) configname += ".yml";
 		if (plugin.getResource(configname) == null)return true;
 		boolean changed = false;
 		
@@ -78,7 +78,7 @@ public class RegisterConfigs {
 		for (String key : config.getKeys(true)){
 			if (!fconfig.contains(key)){
 				fconfig.set(key, config.get(key));
-				FPSCaste.log("Added the config value: " + key);
+				FPSCaste.log("Added the config value: " + key + " to " + configname);
 				changed = true;
 			}
 		}
@@ -130,34 +130,6 @@ public class RegisterConfigs {
 			}
 		}
 		FPSCaste.log("Ranks loaded.", Level.INFO);
-	}
-	
-	/**
-	 * 
-	 */
-	private void loadPlayLists() {
-		YamlConfiguration lists = Config.getConfig(Configs.PLAYLIST.toString());
-		boolean save = false;
-		for (String list : lists.getKeys(false)){
-			if (!lists.contains(list + ".options")){
-				FPSCaste.log("playlist " + list + " does not have options defined!" );
-				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[]{"TDM", "MAPNAMEHEREs"})));
-				save = true;
-				continue;
-			}
-			
-			String bool = lists.getString(list + ".random", null);
-			Boolean random = bool != null ? Boolean.parseBoolean(bool) : null;
-			if (random == null){
-				lists.set(list + ".random", false);
-				save = true;
-				random = false;
-			}
-			 new PlayList(list, lists.getStringList(list + ".options"), random, true);
-			 FPSCaste.log("Loaded playlist: " + list);
-		}
-		
-		if (save) Config.saveConfig(Configs.PLAYLIST.toString(), lists);
 	}
 	
 	private void loadWeapons() {

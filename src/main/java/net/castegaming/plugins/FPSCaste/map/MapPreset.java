@@ -307,6 +307,9 @@ public class MapPreset {
 	}
 	
 	public static boolean exists(String map){
-		return presets.containsKey(map);
+		for (String preset : presets.keySet()){
+			if (preset.toUpperCase().equals(map.toUpperCase())) return true;
+		}
+		return false;
 	}
 }

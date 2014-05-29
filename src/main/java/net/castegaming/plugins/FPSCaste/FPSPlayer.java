@@ -311,7 +311,6 @@ public class FPSPlayer {
 	public void returnOldThings(){
 		Player player = getPlayer();
 		if (player != null){
-			System.out.println("!= null");
 			resetPlayerInfo();
 			player.teleport(storage.getTeleportPlace());
 			

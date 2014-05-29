@@ -26,5 +26,4 @@ enabledperks:
 - perk2
 - perk3
 matches:
- maxplayers: 16
- playlist: 
+ - {maxplayers: 16, playlist: test}

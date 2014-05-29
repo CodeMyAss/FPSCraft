@@ -3,11 +3,13 @@
  */
 package net.castegaming.plugins.FPSCaste.gamemodes.playlist;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.enums.GameModes;
 import net.castegaming.plugins.FPSCaste.gamemodes.GameMode;
 import net.castegaming.plugins.FPSCaste.map.MapPreset;
@@ -42,12 +44,22 @@ public class PlayList {
 	private int index = -1;
 	
 	
+	/**
+	 * 
+	 * @param name
+	 * @param maps
+	 * @param random
+	 */
 	public PlayList(String name, List<String> maps, boolean random){
 		this(name, maps, random, false);
 	}
 	
-	/**
+	/**'
 	 * 
+	 * @param name
+	 * @param maps
+	 * @param random
+	 * @param add
 	 */
 	public PlayList(String name, List<String> maps, boolean random, boolean add) {
 		this.name = name;
@@ -57,7 +69,9 @@ public class PlayList {
 			if (MapPreset.exists(s)){
 				this.maps.add(s);
 			} else if (GameModes.get(s) != null){
-				maps.add(s);
+				this.maps.add(s);
+			} else {
+				FPSCaste.log("Found unknown playlist tag: " + s);
 			}
 		}
 		
@@ -69,21 +83,40 @@ public class PlayList {
 	}
 	
 	public String getMap(){
-		return maps.get(index > maps.size() ? maps.size()-1 : index);
+		int i = index > maps.size() ? maps.size()-1 : index;
+		return maps.get(i);
 	}
 	
 	public void next(){
 		boolean done = false;
+		System.out.println((Arrays.toString(maps.toArray())));
 		while(!done){
+			//done = true;
 			int index = random ? r.nextInt(maps.size()-1) : this.index+1 >= maps.size() ? 0 : this.index+1;
-			if (MapPreset.exists(maps.get(index))){
+			String option = maps.get(index);
+			System.out.println("option: " + option);
+			if (MapPreset.exists(option)){
 				this.index = index;
 				done = true;
 			} else {
 				//gamemode
-				mode = GameModes.get(maps.get(index));
+				this.index++;
+				System.out.println("Added gamemode " + option);
+				mode = GameModes.get(option);
 			}
 		}
 		
+	}
+
+	/**
+	 * @return the total maps in this {@link PlayList}
+	 */
+	public int totalMaps() {
+		int amount = 0;
+		for (String s : maps){
+			if (MapPreset.exists(s)) amount++;
+		}
+		
+		return amount;
 	}
 }

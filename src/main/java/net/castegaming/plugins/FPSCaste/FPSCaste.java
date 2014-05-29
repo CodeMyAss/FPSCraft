@@ -1,11 +1,16 @@
 package net.castegaming.plugins.FPSCaste;
 
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
 import net.castegaming.plugins.FPSCaste.commands.FPSCasteCommandHandler;
 import net.castegaming.plugins.FPSCaste.config.Config;
 import net.castegaming.plugins.FPSCaste.config.RegisterConfigs;
+import net.castegaming.plugins.FPSCaste.enums.Configs;
 import net.castegaming.plugins.FPSCaste.gamemodes.playlist.PlayList;
 import net.castegaming.plugins.FPSCaste.listener.ConnectionListener;
 import net.castegaming.plugins.FPSCaste.listener.DeathListener;
@@ -17,6 +22,7 @@ import net.castegaming.plugins.FPSCaste.listener.RestListener;
 import net.castegaming.plugins.FPSCaste.map.Map;
 import net.castegaming.plugins.FPSCaste.map.initMaps;
 import net.castegaming.plugins.FPSCaste.map.LoadPresets;
+import net.castegaming.plugins.FPSCaste.util.Parse;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -94,6 +100,8 @@ public class FPSCaste extends JavaPlugin{
 			//registers all the maps available
 			new initMaps();
 			
+			loadPlayLists();
+			
 			loadMatches();
 			
 			if (getServer().getOnlinePlayers().length > 0){
@@ -149,25 +157,64 @@ public class FPSCaste extends JavaPlugin{
 		PM.registerEvents(new PlayerListener(this), this);
 		PM.registerEvents(new RestListener(this), this);
 	}
+	
+	/**
+	 * 
+	 */
+	private void loadPlayLists() {
+		YamlConfiguration lists = Config.getConfig(Configs.PLAYLIST.toString());
+		boolean save = false;
+		for (String list : lists.getKeys(false)){
+			if (!lists.contains(list + ".options")){
+				FPSCaste.log("playlist " + list + " does not have options defined!" );
+				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[]{"TDM", "MAPNAMEHEREs"})));
+				save = true;
+				continue;
+			}
+			
+			String bool = lists.getString(list + ".random", null);
+			Boolean random = bool != null ? Boolean.parseBoolean(bool) : null;
+			if (random == null){
+				lists.set(list + ".random", false);
+				save = true;
+				random = false;
+			}
+			 new PlayList(list, lists.getStringList(list + ".options"), random, true);
+			 FPSCaste.log("Loaded playlist: " + list);
+		}
+		
+		if (save) Config.saveConfig(Configs.PLAYLIST.toString(), lists);
+	}
 
 	/**
 	 * 
 	 */
 	private void loadMatches() {
-		ConfigurationSection c = getConfig().getConfigurationSection("matches");
-		for (String s : c.getKeys(false)){
-			PlayList list = PlayList.getNew(c.getString(s + ".playlist"));
+		boolean save = false;
+		List<LinkedHashMap<String, Object>> c = (List<LinkedHashMap<String, Object>>) getConfig().getList("matches");
+		if (c == null){
+			log("No startup matches found!");
+			return;
+		} 
+		for (LinkedHashMap<String, Object> m : c){
+			PlayList list = PlayList.getNew(m.get("playlist").toString());
 			if (list == null) {
-				log("Playlist " + c.getString(s + ".playlist") + " cannot be found!");
+				log("Playlist " + m.get("playlist").toString() + " cannot be found!");
 				continue;
 			}
-			int i = c.getInt(s + ".maxplayers", -1);
+			int i = Parse.parseInt(m.get("maxplayers").toString());
 			if (i < 0){
-				log("A startup match does not have maxplayers defined!");
-				getConfig().set("matches." + s + ".maxplayers", 16);
+				log("A startup match does not have maxplayers defined! using 16");
+				m.put("maxplayers", 16);
+				save = true;
 				i = 16;
 			}
 			log("Created match: " + new Match(i, list));
+		}
+		
+		if (save){
+			getConfig().set("matches", c);
+			saveConfig();
 		}
 	}
 	
@@ -351,7 +398,7 @@ public class FPSCaste extends JavaPlugin{
 	 */
 	public static int randomMatch(){
 		if (Match.openMatches.size() > 0){
-			int r =  new Random().nextInt(Match.openMatches.size()-1);
+			int r =  new Random().nextInt(Match.openMatches.size());
 			return Match.openMatches.get(r);
 		} else {
 			return -1;

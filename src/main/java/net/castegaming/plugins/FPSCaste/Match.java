@@ -167,18 +167,25 @@ public class Match {
 			list.next();
 			String mapname = list.getMap();
 			int mapID = Map.isMapAvailable(mapname);
-			if(mapID >= 0){
-				//set new map
-				Map.addAvailable(this.mapID);
-				Map.removeAvailable(mapID);
-				this.mapID = mapID;
-				broadcast("Switching to a new map! (" + getMap().getMapName() + ")");
-			} else {
-				if (this.mapID >= 0){
-					//same map
-					broadcast("Keeping the same map because we have not found an available map!");
-				}
+			mapID = Map.isMapAvailable(mapname);
+			
+			int tries = 0;
+			while(mapID < 0){
+				if (tries >= list.totalMaps()) break;
+				
+				broadcast("Couldnt not find an available spot for map " + mapname + ". Checking next map!");
+				list.next();
+				mapname = list.getMap();
+				mapID = Map.isMapAvailable(mapname);
+				tries++;
 			}
+			
+			//set new map
+			Map.addAvailable(this.mapID);
+			Map.removeAvailable(mapID);
+			this.mapID = mapID;
+			broadcast("Switching to a new map! (" + getMap().getMapName() + ")");
+			
 			mode = list.getMode();
 			mode.init(getMap());
 		}

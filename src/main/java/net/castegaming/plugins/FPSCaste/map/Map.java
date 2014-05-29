@@ -38,7 +38,7 @@ public class Map {
 	 */
 	public static Integer isMapAvailable(String mapname) {
 		for (Integer i : mapAvailable){
-			if (maps.get(i).getMapName().equals(mapname)) return i;
+			if (maps.get(i).getMapName().toUpperCase().equals(mapname.toUpperCase())) return i;
 		}
 		return -1;
 	}

@@ -58,10 +58,11 @@ public enum GameModes {
 	 * @return
 	 */
 	public static GameModes get(String s) {
-		GameModes m;
-		if ((m = valueOf(s.toUpperCase())) != null){
-			return m;
+		try {
+			GameModes m = valueOf(s.toUpperCase());
+			return m != null ? m : byName(s);
+		} catch (IllegalArgumentException e){
+			return null;
 		}
-		return byName(s);
 	}
 }
