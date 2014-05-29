@@ -28,12 +28,12 @@ public class PlayList {
 		if (!playlists.containsKey(string)) return null;
 		
 		PlayList list = playlists.get(string);
-		return new PlayList(list.name, list.options, list.random);
+		return new PlayList(list.name, list.maps, list.random);
 	}
 	
 	private static Random r = new Random();
 	
-	List<String> options = new LinkedList<String>();
+	List<String> maps = new LinkedList<String>();
 	GameModes mode;
 	
 	
@@ -42,22 +42,22 @@ public class PlayList {
 	private int index = -1;
 	
 	
-	public PlayList(String name, List<String> options, boolean random){
-		this(name, options, random, false);
+	public PlayList(String name, List<String> maps, boolean random){
+		this(name, maps, random, false);
 	}
 	
 	/**
 	 * 
 	 */
-	public PlayList(String name, List<String> options, boolean random, boolean add) {
+	public PlayList(String name, List<String> maps, boolean random, boolean add) {
 		this.name = name;
 		this.random = random;
 		
-		for (String s : options){
+		for (String s : maps){
 			if (MapPreset.exists(s)){
-				this.options.add(s);
+				this.maps.add(s);
 			} else if (GameModes.get(s) != null){
-				options.add(s);
+				maps.add(s);
 			}
 		}
 		
@@ -69,19 +69,19 @@ public class PlayList {
 	}
 	
 	public String getMap(){
-		return options.get(index > options.size() ? options.size()-1 : index);
+		return maps.get(index > maps.size() ? maps.size()-1 : index);
 	}
 	
 	public void next(){
 		boolean done = false;
 		while(!done){
-			int index = random ? r.nextInt(options.size()-1) : this.index+1 >= options.size() ? 0 : this.index+1;
-			if (MapPreset.exists(options.get(index))){
+			int index = random ? r.nextInt(maps.size()-1) : this.index+1 >= maps.size() ? 0 : this.index+1;
+			if (MapPreset.exists(maps.get(index))){
 				this.index = index;
 				done = true;
 			} else {
 				//gamemode
-				mode = GameModes.get(options.get(index));
+				mode = GameModes.get(maps.get(index));
 			}
 		}
 		

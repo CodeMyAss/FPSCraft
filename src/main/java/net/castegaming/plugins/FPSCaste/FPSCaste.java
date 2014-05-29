@@ -76,7 +76,7 @@ public class FPSCaste extends JavaPlugin{
 	 * Load FPSCaste
 	 */
 	private void loadFPSCaste() {
-		if (Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core") != null){
+//		if (Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core") != null){
 			FPSCaste.log("--------------- " + NamePrefix + "---------------");
 			long time = System.currentTimeMillis();
 			
@@ -118,10 +118,10 @@ public class FPSCaste extends JavaPlugin{
 			
 			FPSCaste.log("Loading done. Took " + (System.currentTimeMillis()-time) + " miliseconds.");
 			FPSCaste.log("----------------------------------------");
-		} else {
-			FPSCaste.log(ChatColor.DARK_RED + "Multiverse has not been found!/n" + ChatColor.DARK_RED + "We NEED this! stopping FPSCaste", Level.SEVERE);
-			Bukkit.getServer().getPluginManager().disablePlugin(this);
-		}
+//		} else {
+//			FPSCaste.log(ChatColor.DARK_RED + "Multiverse has not been found!/n" + ChatColor.DARK_RED + "We NEED this! stopping FPSCaste", Level.SEVERE);
+//			Bukkit.getServer().getPluginManager().disablePlugin(this);
+//		}
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class FPSCaste extends JavaPlugin{
 	private void loadMatches() {
 		ConfigurationSection c = getConfig().getConfigurationSection("matches");
 		for (String s : c.getKeys(false)){
-			PlayList list = PlayList.getNew(c.getString(s + "playlist"));
+			PlayList list = PlayList.getNew(c.getString(s + ".playlist"));
 			if (list == null) {
 				log("Playlist " + c.getString(s + ".playlist") + " cannot be found!");
 				continue;

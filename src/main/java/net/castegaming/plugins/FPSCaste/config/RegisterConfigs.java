@@ -1,6 +1,7 @@
 package net.castegaming.plugins.FPSCaste.config;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -11,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.Match;
+import net.castegaming.plugins.FPSCaste.enums.Configs;
 import net.castegaming.plugins.FPSCaste.enums.GunClass;
 import net.castegaming.plugins.FPSCaste.enums.Points;
 import net.castegaming.plugins.FPSCaste.enums.Rank;
@@ -21,7 +23,6 @@ import net.castegaming.plugins.FPSCaste.playerclass.weapons.Gun;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.InitWeapons;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
 import net.castegaming.plugins.FPSCaste.util.TimeUtil;
-import net.castegaming.plugins.FPSCaste.util.Util;
 
 public class RegisterConfigs {
 	
@@ -30,7 +31,6 @@ public class RegisterConfigs {
 	public RegisterConfigs(FPSCaste plugin){
 		this.plugin = plugin;
 		register();
-		checkConfig();
 		loadConfigValues();
 		setBroadCastTimes();
 		loadRanks();
@@ -41,18 +41,20 @@ public class RegisterConfigs {
 	}
 
 	private void register(){
-		if (Config.getConfig("config") == null){
+		if (Config.getConfig(Configs.CONFIG.toString()) == null){
 			plugin.saveDefaultConfig();
-			FPSCaste.log("Created config.yml!", Level.INFO);
+			FPSCaste.log("Created " + Configs.CONFIG.toString() + "!", Level.INFO);
 		}
 		
-		String[] configsStrings = {"maps", "defaultplayer", "points", "ranks", "defaultclasses", "playlists"};
+		Configs[] configsStrings = Configs.values();
 		String[] folderStrings = {"players", "maps", "weapons"};
 		
-		for (String s : configsStrings){
-			if (Config.getConfig(s) == null){
-				Config.createConfig(s);
+		for (Configs s : configsStrings){
+			if (Config.getConfig(s.toString()) == null){
+				Config.createConfig(s.toString());
 				FPSCaste.log("Created " + s + ".yml!", Level.INFO);
+			} else {
+				checkConfig(s.toString());
 			}
 		}
 		for (String s : folderStrings){
@@ -67,19 +69,27 @@ public class RegisterConfigs {
 	/**
 	 * Checks the config for possible mistakes or needed updates.
 	 */
-	public void checkConfig(){
-		YamlConfiguration config = YamlConfiguration.loadConfiguration(plugin.getResource("config.yml"));
-		YamlConfiguration fconfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder() + File.separator + "config.yml"));
+	public boolean checkConfig(String configname) {
+		if (plugin.getResource(configname) == null)return true;
+		boolean changed = false;
 		
-		boolean save = false;
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(plugin.getResource(configname));
+		YamlConfiguration fconfig = YamlConfiguration.loadConfiguration(new File(plugin.getDataFolder() + File.separator + configname));
 		for (String key : config.getKeys(true)){
 			if (!fconfig.contains(key)){
-				plugin.getConfig().set(key, config.get(key));
+				fconfig.set(key, config.get(key));
 				FPSCaste.log("Added the config value: " + key);
-				save = true;
+				changed = true;
 			}
 		}
-		if (save) plugin.saveConfig();
+		
+		if (changed){
+			try {
+				fconfig.save(plugin.getDataFolder() + File.separator + configname);
+			} catch (IOException e) {e.printStackTrace();}
+		}
+		
+		return !changed;
 	}
 	
 	private void loadConfigValues() {
@@ -91,21 +101,20 @@ public class RegisterConfigs {
 		List<String> list = plugin.getConfig().getStringList("broadcastTimes");
 		List<Integer> ints = new LinkedList<Integer>();
 		for (String string : list){
-			String intString = string.substring(0, string.length() - 1);
-			long number = TimeUtil.getTimeMillis(intString);
+			long number = TimeUtil.getTimeMillis(string);
 			if (number > -1){
 					ints.add(ints.size(), (int)number/1000);
 			} else {
-				FPSCaste.log(string + " is no valid number! Check broadcastTimes in your config ", Level.WARNING);
+				FPSCaste.log(string + "(" + number +  ") is no valid number! Check broadcastTimes in your config ", Level.WARNING);
 			}
 		}
 		Match.broadCastValues = ints;
 	}
 	
 	private void loadRanks(){
-		YamlConfiguration ranks = Config.getConfig("ranks");
+		YamlConfiguration ranks = Config.getConfig(Configs.RANK.toString());
 		if (ranks == null){
-			ranks = Config.createConfig("ranks");
+			ranks = Config.createConfig(Configs.RANK.toString());
 		}
 		
 		for (String key : ranks.getKeys(false)){
@@ -117,16 +126,17 @@ public class RegisterConfigs {
 				}
 				
 			} else {
-				FPSCaste.log("Rank: " + key + " is invalid! Check teh xp required.", Level.INFO);
+				FPSCaste.log("Rank: " + key + " is invalid! Check the xp required.", Level.INFO);
 			}
 		}
+		FPSCaste.log("Ranks loaded.", Level.INFO);
 	}
 	
 	/**
 	 * 
 	 */
 	private void loadPlayLists() {
-		YamlConfiguration lists = Config.getConfig("playlist");
+		YamlConfiguration lists = Config.getConfig(Configs.PLAYLIST.toString());
 		boolean save = false;
 		for (String list : lists.getKeys(false)){
 			if (!lists.contains(list + ".options")){
@@ -136,7 +146,8 @@ public class RegisterConfigs {
 				continue;
 			}
 			
-			Boolean random = (Boolean) lists.get(list + ".random", null);
+			String bool = lists.getString(list + ".random", null);
+			Boolean random = bool != null ? Boolean.parseBoolean(bool) : null;
 			if (random == null){
 				lists.set(list + ".random", false);
 				save = true;
@@ -146,7 +157,7 @@ public class RegisterConfigs {
 			 FPSCaste.log("Loaded playlist: " + list);
 		}
 		
-		if (save) Config.saveConfig("playlist", lists);
+		if (save) Config.saveConfig(Configs.PLAYLIST.toString(), lists);
 	}
 	
 	private void loadWeapons() {
@@ -155,7 +166,7 @@ public class RegisterConfigs {
 	}
 	
 	private void loadDefaultClasses() {
-		YamlConfiguration classes = Config.getConfig("defaultclasses");
+		YamlConfiguration classes = Config.getConfig(Configs.DEFAULTCLASSES.toString());
 		for (String classname : classes.getKeys(false)){
 			new PlayerClass(classname);
 			FPSCaste.log("Created default class: " + classname);

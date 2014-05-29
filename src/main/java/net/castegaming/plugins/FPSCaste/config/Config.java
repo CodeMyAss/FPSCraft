@@ -71,9 +71,8 @@ public class Config {
             if (!name.endsWith(".yml")) {
             	name += ".yml";
 	        }
-	        
-            File file = new File(plugin.getDataFolder(), name);
             
+            File file = new File(plugin.getDataFolder(), name);
             if (!file.exists()){
 				return null;
 			} else {

@@ -25,3 +25,6 @@ enabledperks:
 - perk1
 - perk2
 - perk3
+matches:
+ maxplayers: 16
+ playlist: 
