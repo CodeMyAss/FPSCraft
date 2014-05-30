@@ -223,25 +223,30 @@ public class Match {
 	 * Starts the match!
 	 */
 	public void startGame() {
-		 startingtime = System.currentTimeMillis();
-		 state = gameState.PLAYING;
-		 
+		startingtime = System.currentTimeMillis();
+		state = gameState.PLAYING;
+		setTime(mode.getTicks());
 		CheckTimeScheduler();
 		timeScheduler();
-		
+
 		broadcast("The match has started! Enjoy");
-		
-		//endgame scheduler
-		finaltime_scheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
-			@Override
-			public void run() {
-				endGameTime();
-			}
-		}, playtime);
-	
-		 //unfreeze all the players
+		System.out.println(playtime);
+		// endgame scheduler
+		finaltime_scheduler = Bukkit
+				.getServer()
+				.getScheduler()
+				.scheduleSyncDelayedTask(FPSCaste.getInstance(),
+						new Runnable() {
+							@Override
+							public void run() {
+								endGameTime();
+							}
+						}, playtime);
+
+		// unfreeze all the players
 		for (String name : players.keySet()) {
-			if (!FPSCaste.getFPSPlayer(name).getTeam().equals(teamName.SPECTATOR)){
+			if (!FPSCaste.getFPSPlayer(name).getTeam()
+					.equals(teamName.SPECTATOR)) {
 				FPSCaste.getFPSPlayer(name).unFreeze();
 			}
 		}
@@ -255,7 +260,6 @@ public class Match {
 			@Override
 			public void run() {
 				try {
-					System.out.println(getPlayTime());
 					Tick20();
 				} catch (Exception e){
 					cancel();
@@ -494,6 +498,7 @@ public class Match {
 			} else {
 				addToAvailable();
 				//do nothing, because we want atleast 1 map running all the time
+				//TODO reset match
 			}
 		} else {
 			addToAvailable();
@@ -759,7 +764,9 @@ public class Match {
 	 * @return The time in miliseconds
 	 */
 	private long timeLeft() {
-		long time = (startingtime + playtime*50) - (System.currentTimeMillis() - startingtime) - startingtime;
+		long playtimemili = playtime*50;
+		long endtime = startingtime + playtimemili;
+		long time = endtime - (System.currentTimeMillis() - startingtime); //- startingtime;
 		return time;
 	}
 	
@@ -789,9 +796,7 @@ public class Match {
 	 */
 	private void CheckTimeScheduler() {
 		for (int i=CurrentBroadCastValues.size()-1; i>=0 ; i--){
-			System.out.println(timeLeft()+ " " + timeLeft()/50);
 			if (CurrentBroadCastValues.get(i) >= timeLeft()/50){
-				System.out.println("removed " + CurrentBroadCastValues.get(i) + " " + timeLeft()/50);
 				CurrentBroadCastValues.remove(i);
 			} else {
 				return;

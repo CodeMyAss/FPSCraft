@@ -105,7 +105,7 @@ public class Weapon {
 	}
 	
 	public int getBullets(){
-		if (weapon instanceof Gun){
+		if (weapon instanceof Gun && getItem() != null){
 			return getItem().getAmount();
 		}
 		return -1;

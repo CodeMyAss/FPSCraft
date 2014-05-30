@@ -97,7 +97,7 @@ public class PlayList {
 				done = true;
 			} else {
 				//gamemode
-				this.index++;
+				this.index = (this.index >= maps.size()-1) ? 0 : this.index+1;
 				mode = GameModes.get(option);
 			}
 		}
