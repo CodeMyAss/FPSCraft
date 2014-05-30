@@ -6,13 +6,15 @@ package net.castegaming.plugins.FPSCaste.playerclass.data;
  * @author Brord
  * @since 30 mei 2014, 01:51:39
  */
-public abstract class PlayerData {
+public abstract class PlayerStats {
 	
+	private String name;
+
 	/**
 	 * 
 	 */
-	public PlayerData(String name) {
-		
+	public PlayerStats(String name) {
+		this.name = name;
 	}
 	
 	abstract void load();

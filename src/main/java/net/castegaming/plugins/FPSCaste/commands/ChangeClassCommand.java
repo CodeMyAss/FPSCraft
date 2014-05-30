@@ -5,6 +5,7 @@ import net.castegaming.plugins.FPSCaste.FPSPlayer;
 import net.castegaming.plugins.FPSCaste.exceptions.NoOnlinePlayerException;
 import net.castegaming.plugins.FPSCaste.exceptions.NotIngameException;
 import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
+import net.castegaming.plugins.FPSCaste.util.Parse;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -19,7 +20,7 @@ public class ChangeClassCommand extends FPSCommandBase{
 	public boolean handle() {
 		FPSPlayer player = FPSCaste.getFPSPlayer(getSender().getName());
 		if (args.length > 0){
-			String name = net.castegaming.plugins.FPSCaste.util.Parse.ArrayToString(args, " ");
+			String name = Parse.ArrayToString(args, " ");
 			String tempname = "";
 			if ((tempname = player.getConfig().getCreatedClass(name)) != ""){
 				//a custom class
@@ -61,6 +62,7 @@ public class ChangeClassCommand extends FPSCommandBase{
 	}
 	
 	public void sendOptions(FPSPlayer player){
+		player.sendClearMessage(ChatColor.GOLD + "You currently have " + player.getclass());
 		player.sendClearMessage(ChatColor.GOLD + "Default classes" + ChatColor.RESET + ": " + PlayerClass.getDefaultClasses());
 		if (player.hasCustomClasses()){
 			player.sendClearMessage(ChatColor.GOLD + "Custom classes" + ChatColor.RESET + ": " + player.getCustomclassnames());

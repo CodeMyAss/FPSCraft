@@ -40,10 +40,15 @@ public class PlayerClass {
 	 * @return The class found
 	 */
 	public static String getDefaultClassName(String classname){
-		System.out.println("passed name: " + classname);
 		for (String name : defaultClasses.keySet()){
-			System.out.println("found classname: " + name);
 			if (name.equals(classname)){
+				return classname;
+			} else if (classname.toUpperCase().equals(name.toUpperCase())){
+				return name;
+			}
+		}
+		for (String name : defaultClasses.keySet()){
+			if (name.startsWith(classname)){
 				return classname;
 			} else if (classname.toUpperCase().equals(name.toUpperCase())){
 				return name;
@@ -237,5 +242,13 @@ public class PlayerClass {
 	 */
 	public void removeWeapon(int heldItemSlot) {
 		weapons[heldItemSlot] = null;
+	}
+	
+	/**
+	  * @see java.lang.Object#toString()
+	  */
+	@Override
+	public String toString() {
+		return classname;
 	}
 }

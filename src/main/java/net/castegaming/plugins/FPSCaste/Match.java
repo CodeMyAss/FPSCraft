@@ -3,7 +3,6 @@ package net.castegaming.plugins.FPSCaste;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -19,10 +18,8 @@ import net.castegaming.plugins.FPSCaste.enums.Points;
 import net.castegaming.plugins.FPSCaste.enums.breakableBlocks;
 import net.castegaming.plugins.FPSCaste.enums.gameState;
 import net.castegaming.plugins.FPSCaste.enums.gameType;
-import net.castegaming.plugins.FPSCaste.enums.gunName;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
 import net.castegaming.plugins.FPSCaste.gamemodes.GameMode;
-import net.castegaming.plugins.FPSCaste.gamemodes.TeamDeathmatch;
 import net.castegaming.plugins.FPSCaste.gamemodes.playlist.PlayList;
 import net.castegaming.plugins.FPSCaste.map.Map;
 
@@ -198,7 +195,7 @@ public class Match {
 		/*================start first scheduler====================*/
 		
 		startingtime = System.currentTimeMillis();
-		setTime(mode.getRound()*60*20);
+		//setTime(mode.getRound()*60*20);
 		state = gameState.PREGAME;
 		
 		new BukkitRunnable() {
@@ -776,7 +773,6 @@ public class Match {
 		long nextBroadcastTime = CurrentBroadCastValues.get(0)*50;
 		long timeLeft = timeLeft();
 		long schedulertime = (int) Math.ceil(((timeLeft - nextBroadcastTime))/50);
-		System.out.println(schedulertime + " " + timeLeft + " " + nextBroadcastTime);
 		scheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
 			@Override
 			public void run() {

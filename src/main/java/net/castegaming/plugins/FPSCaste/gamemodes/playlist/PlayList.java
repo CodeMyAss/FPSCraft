@@ -3,7 +3,6 @@
  */
 package net.castegaming.plugins.FPSCaste.gamemodes.playlist;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,19 +88,16 @@ public class PlayList {
 	
 	public void next(){
 		boolean done = false;
-		System.out.println((Arrays.toString(maps.toArray())));
 		while(!done){
 			//done = true;
 			int index = random ? r.nextInt(maps.size()-1) : this.index+1 >= maps.size() ? 0 : this.index+1;
 			String option = maps.get(index);
-			System.out.println("option: " + option);
 			if (MapPreset.exists(option)){
 				this.index = index;
 				done = true;
 			} else {
 				//gamemode
 				this.index++;
-				System.out.println("Added gamemode " + option);
 				mode = GameModes.get(option);
 			}
 		}

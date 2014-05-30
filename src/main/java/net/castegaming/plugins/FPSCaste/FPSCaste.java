@@ -28,7 +28,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
@@ -166,8 +165,8 @@ public class FPSCaste extends JavaPlugin{
 		boolean save = false;
 		for (String list : lists.getKeys(false)){
 			if (!lists.contains(list + ".options")){
-				FPSCaste.log("playlist " + list + " does not have options defined!" );
-				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[]{"TDM", "MAPNAMEHEREs"})));
+				FPSCaste.log("playlist " + list + " does not have options defined! skipping..." );
+				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[]{"TDM", "MAPNAMEHERE"})));
 				save = true;
 				continue;
 			}
