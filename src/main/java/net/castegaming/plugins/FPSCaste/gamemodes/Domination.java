@@ -18,7 +18,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 public class Domination extends FlagGameMode {
 
 	public Domination() {
-		super(gameType.DOM, 10, 200);
+		super(gameType.DOM, 20, 200);
 	}
 
 	@Override

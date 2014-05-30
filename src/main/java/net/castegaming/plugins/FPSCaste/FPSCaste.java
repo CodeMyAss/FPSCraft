@@ -11,6 +11,7 @@ import net.castegaming.plugins.FPSCaste.commands.FPSCasteCommandHandler;
 import net.castegaming.plugins.FPSCaste.config.Config;
 import net.castegaming.plugins.FPSCaste.config.RegisterConfigs;
 import net.castegaming.plugins.FPSCaste.enums.Configs;
+import net.castegaming.plugins.FPSCaste.exceptions.WrongPlayListException;
 import net.castegaming.plugins.FPSCaste.gamemodes.playlist.PlayList;
 import net.castegaming.plugins.FPSCaste.listener.ConnectionListener;
 import net.castegaming.plugins.FPSCaste.listener.DeathListener;
@@ -163,23 +164,27 @@ public class FPSCaste extends JavaPlugin{
 	private void loadPlayLists() {
 		YamlConfiguration lists = Config.getConfig(Configs.PLAYLIST.toString());
 		boolean save = false;
-		for (String list : lists.getKeys(false)){
-			if (!lists.contains(list + ".options")){
-				FPSCaste.log("playlist " + list + " does not have options defined! skipping..." );
-				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[]{"TDM", "MAPNAMEHERE"})));
+		for (String list : lists.getKeys(false)) {
+			if (!lists.contains(list + ".options")) {
+				FPSCaste.log("playlist " + list + " does not have options defined! skipping...");
+				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[] {"TDM", "MAPNAMEHERE" })));
 				save = true;
 				continue;
 			}
-			
+
 			String bool = lists.getString(list + ".random", null);
 			Boolean random = bool != null ? Boolean.parseBoolean(bool) : null;
-			if (random == null){
+			if (random == null) {
 				lists.set(list + ".random", false);
 				save = true;
 				random = false;
 			}
-			 new PlayList(list, lists.getStringList(list + ".options"), random, true);
-			 FPSCaste.log("Loaded playlist: " + list);
+			try {
+				new PlayList(list, lists.getStringList(list + ".options"), random, true);
+				FPSCaste.log("Loaded playlist: " + list);
+			} catch (WrongPlayListException e) {
+				log("Error loading playlist " + list + ", " + e.getMessage());
+			}
 		}
 		
 		if (save) Config.saveConfig(Configs.PLAYLIST.toString(), lists);

@@ -107,8 +107,8 @@ public abstract class Flag extends GameObject{
 				public void run() {
 					boolean containsTeamMates = false;
 					boolean containsEnemies = false;
-					int total = 100 - (Math.round(100 / time * captureProgress % 100));
-					
+					float total = Math.round(100 / time * captureProgress % 100);
+					String text1 = text.replaceAll("%counter", (int)total + "");
 					Set<String> nearplayers = getNearPlayers(matchID);
 					for (String name : nearplayers) {
 						if (FPSCaste.getFPSPlayer(name).getTeam().equals(team)) {
@@ -117,7 +117,7 @@ public abstract class Flag extends GameObject{
 							containsEnemies = true;
 						}
 						
-						FPSCaste.getFPSPlayer(name).createTextBar(text.replaceAll("%counter", total + ""), total);
+						FPSCaste.getFPSPlayer(name).createTextBar(text1, total/100);
 					}
 
 					if (containsTeamMates) {
