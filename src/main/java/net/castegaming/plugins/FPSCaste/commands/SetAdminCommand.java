@@ -12,9 +12,9 @@ import org.bukkit.command.CommandSender;
  * @author Brord
  *
  */
-public class setAdminCommand extends FPSAdminCommand{
+public class SetAdminCommand extends FPSAdminCommand{
 
-	public setAdminCommand(CommandSender sender, String[] args) throws NotAdminException, NotIngameException, NoOnlinePlayerException {
+	public SetAdminCommand(CommandSender sender, String[] args) throws NotAdminException, NotIngameException, NoOnlinePlayerException {
 		super(sender, args, false);
 	}
 	

@@ -9,9 +9,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class statsCommand extends FPSCommandBase{
+public class StatsCommand extends FPSCommandBase{
 
-	public statsCommand(CommandSender sender, String[] args) throws NotIngameException, NoOnlinePlayerException {
+	public StatsCommand(CommandSender sender, String[] args) throws NotIngameException, NoOnlinePlayerException {
 		super(sender, args, false, false);
 	}
 

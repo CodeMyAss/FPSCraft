@@ -10,9 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class setBuildingModeCommand extends FPSAdminCommand{
+public class SetBuildingModeCommand extends FPSAdminCommand{
 
-	public setBuildingModeCommand(CommandSender sender, String[] args) 
+	public SetBuildingModeCommand(CommandSender sender, String[] args) 
 							 throws NotAdminException, NotIngameException, NoOnlinePlayerException {
 		super(sender, args, false);
 	}

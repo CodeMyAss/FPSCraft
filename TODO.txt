@@ -16,12 +16,16 @@ Alpha:
 
 
 Bugs:
-weapons not working
+- weapons not working
+- one map in playlist glitches
+
 
 ----------------------------
 
 Beta:
 - Make DEM
+- Points per gamemode
+- Gamemode configs
 
 Full release:
 - Create health regen system

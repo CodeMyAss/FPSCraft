@@ -58,7 +58,7 @@ public class FPSCasteCommandHandler{
 			} else if (label.equalsIgnoreCase("stopgame")){
 				cmdClass = new StopGameCommand(sender, args);
 			} else if (label.equalsIgnoreCase("setadmin")){
-				cmdClass = new setAdminCommand(sender, args);
+				cmdClass = new SetAdminCommand(sender, args);
 			} else if (label.equalsIgnoreCase("showgames")){
 				cmdClass = new ShowgamesCommand(sender, args);
 			} else if (label.equalsIgnoreCase("allies")){
@@ -70,9 +70,9 @@ public class FPSCasteCommandHandler{
 			} else if (label.equalsIgnoreCase("newmap") || label.equalsIgnoreCase("nm")){ 
 				cmdClass = new NewMapCommand(sender, args);
 			} else if (label.equalsIgnoreCase("buildingmode") || label.equalsIgnoreCase("buildmode")){
-				cmdClass = new setBuildingModeCommand(sender, args);
+				cmdClass = new SetBuildingModeCommand(sender, args);
 			} else if (label.equalsIgnoreCase("stats")){
-				cmdClass = new statsCommand(sender, args);
+				cmdClass = new StatsCommand(sender, args);
 			} else if (label.equalsIgnoreCase("class") || label.equalsIgnoreCase("clas")){
 				cmdClass = new ChangeClassCommand(sender, args);
 			} else if (label.equalsIgnoreCase("createmap") || label.equalsIgnoreCase("createm") || label.equalsIgnoreCase("cmap") || label.equalsIgnoreCase("cm")){
