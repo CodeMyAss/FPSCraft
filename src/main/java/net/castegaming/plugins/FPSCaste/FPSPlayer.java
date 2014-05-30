@@ -20,7 +20,6 @@ import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Weapon;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
 import net.castegaming.plugins.FPSCaste.storage.PlayerStorage;
-import net.castegaming.plugins.FPSCaste.util.BossHealthUtil;
 import net.castegaming.plugins.FPSCaste.util.StatusBarAPI;
 import net.castegaming.plugins.FPSCaste.util.Util;
 

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.enums.PredatorState;
 import net.castegaming.plugins.FPSCaste.killstreaks.gui.NameSelector;
-import net.castegaming.plugins.FPSCaste.util.BossHealthUtil;
+import net.castegaming.plugins.FPSCaste.util.StatusBarAPI;
 import net.castegaming.plugins.FPSCaste.util.Util;
 
 import org.bukkit.Bukkit;
@@ -178,7 +178,7 @@ public class Predator extends Killstreak{
 											clicker.setMetadata("aimedplayer", new FixedMetadataValue(FPSCaste.getInstance(), name));
 											clicker.setMetadata("speed", new FixedMetadataValue(FPSCaste.getInstance(), 10));
 											
-											BossHealthUtil.displayTextBar("Hold sneak to boost", p);
+											StatusBarAPI.setStatusBar(p, "Hold sneak to boost");
 											
 											Location l = p.getLocation().add(0, minimumheight, 0);
 											l.setPitch(90);
@@ -244,7 +244,7 @@ public class Predator extends Killstreak{
 							}
 						}
 						
-						BossHealthUtil.displayTextBar("EXPLODED", p);
+						StatusBarAPI.setStatusBar(p, "EXPLODED");
 						p.getVelocity().zero();
 						
 						if (e.getPlayer().hasMetadata("boosttaskid")){
@@ -273,7 +273,7 @@ public class Predator extends Killstreak{
 				p.removeMetadata("aimedplayer", FPSCaste.getInstance());
 				p.removeMetadata("speed", FPSCaste.getInstance());
 				predators.remove(name);
-				BossHealthUtil.sendPacket(p, BossHealthUtil.getDestroyEntityPacket());
+				StatusBarAPI.removeStatusBar(p);
 			}
 		}
 	}
@@ -291,11 +291,11 @@ public class Predator extends Killstreak{
 							if (p == null) {cancel(); return;}
 							if (!predators.containsKey(name)) {cancel(); p.removeMetadata("boosttaskid", FPSCaste.getInstance()); return;}
 							
-							int speed = p.getMetadata("speed").get(0).asInt();
+							float speed = p.getMetadata("speed").get(0).asInt();
 							if (speed < 100){
 								p.setMetadata("speed", new FixedMetadataValue(FPSCaste.getInstance(), speed+2.5));
 								
-								BossHealthUtil.updateTextBar(p, "Hold sneak to boost", speed);
+								StatusBarAPI.setStatusBar(p, "Hold sneak to boost", speed/100);
 							} else {
 								cancel();
 								p.removeMetadata("boosttaskid", FPSCaste.getInstance());

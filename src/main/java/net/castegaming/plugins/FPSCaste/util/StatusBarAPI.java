@@ -98,8 +98,15 @@ public class StatusBarAPI {
             sendPacket(player, dragon.getMetaPacket(dragon.getWatcher()));
             sendPacket(player, dragon.getTeleportPacket(player.getLocation().add(0, -200, 0)));
         }
-
     }
+    
+    /**
+	 * @param p
+	 * @param string
+	 */
+	public static void setStatusBar(Player p, String string) {
+		setStatusBar(p, string, 1);
+	}
 
     /**
      * Removes the status bar for all players on the server.  See {@link #removeStatusBar(Player)}.
@@ -434,5 +441,4 @@ public class StatusBarAPI {
         }
 
     }
-
 }
