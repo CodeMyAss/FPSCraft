@@ -224,10 +224,8 @@ public class Match {
 	 * Starts the match!
 	 */
 	public void startGame() {
-		startingtime = System.currentTimeMillis();
 		state = gameState.PLAYING;
 		setTime(mode.getTicks());
-		CheckTimeScheduler();
 
 		broadcast("The match has started! Enjoy");
 		// endgame scheduler
@@ -240,6 +238,13 @@ public class Match {
 				FPSCaste.getFPSPlayer(name).unFreeze();
 			}
 		}
+	}
+	
+	/**
+	 * Starts the countdown for the start of the game
+	 */
+	void startPlayCountdown(){
+		if (state.equals(gameState.PREGAME))Counter("Starting in %counter seconds!", "Starting now!", switchWaidTime, "startGame");
 	}
 	
 	/**
@@ -322,9 +327,11 @@ public class Match {
 					for (String player : playerList){
 						if (Bukkit.getServer().getPlayer(player) != null && FPSCaste.getFPSPlayer(player).isIngame()){
 							players.put(player, teamName.SPECTATOR);
+							FPSCaste.getFPSPlayer(player).resetPlayerInfo();
 							FPSCaste.getFPSPlayer(player).spawn();
 						}
 					}
+					if (players.size() > 0) startPlayCountdown();
 				}
 			});
 		} else {
@@ -480,7 +487,7 @@ public class Match {
 		
 		//enderdragon timer
 		if (currentPlayers == 1 && state.equals(gameState.PREGAME)){
-			Counter("Starting in %counter seconds!", "Starting now!", switchWaidTime, "startGame");
+			startPlayCountdown();
 		}
 		mode.playerJoin( playername);
 	}
@@ -717,7 +724,7 @@ public class Match {
 	 */
 	public String getTimeLeft(){
 		//mili time the game has played
-		if (state.equals(gameState.PREGAME)){
+		if (state.equals(gameState.PREGAME) || state.equals(gameState.ENDING)){
 			return mode.getRound() + ":00";
 		} else {
 			long timeplayed = System.currentTimeMillis() - startingtime;

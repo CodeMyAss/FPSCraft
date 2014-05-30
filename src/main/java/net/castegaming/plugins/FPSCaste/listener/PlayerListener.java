@@ -155,7 +155,7 @@ public class PlayerListener implements Listener {
 					removeRunning(name);
 				}
 			}
-		}, full ? 0 : delay, delay));
+		}, full ? delay : 0, delay));
 	}
 	
 	/**

@@ -42,9 +42,7 @@ public class Domination extends FlagGameMode {
 	@Override
 	public void handleNear(String name) {
 		DominationFlag f = (DominationFlag) getClosest(name);
-		if (!f.getHolder().equals(FPSCaste.getFPSPlayer(name).getTeam()) && !f.isCapturing()){
-			f.takeOver(100, FPSCaste.getFPSPlayer(name).getTeam(), name, "Capturing flag " + f.getName());
-		}
+		f.takeOver(100, FPSCaste.getFPSPlayer(name).getTeam(), name, "Capturing flag " + f.getName());
 	}
 
 	@Override

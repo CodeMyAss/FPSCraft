@@ -60,6 +60,13 @@ public class StatusBarAPI {
             DRAGONS.remove(player);
         }
     }
+    
+    /**
+	 * @param name
+	 */
+	public static void removeStatusBar(String name) {
+		removeStatusBar(Bukkit.getServer().getPlayer(name));
+	}
 
     /**
      * Sets a player's status bar to display a specific message and fill amount.  The fill amount is in
@@ -83,9 +90,6 @@ public class StatusBarAPI {
             percent = 1.0f;
         if(percent < 0.05f)
             percent = 0.05f;
-
-        if (text.isEmpty() && dragon != null)
-            removeStatusBar(player);
 
         if (dragon == null) {
             dragon = new FakeDragon(player.getLocation().add(0, -200, 0), text, percent);
@@ -157,15 +161,17 @@ public class StatusBarAPI {
 
 			@Override
 			public void run(){
+				int percent = health / healthAdd;
+				float sec = MAX / healthAdd - percent;
+				String text1 = text.replace("%counter", "" + (int)sec);
+				
 				if(health == -1){
 					//remove
 					removeStatusBar(player);
 					cancel();
 				} else if (loadUp ? health < MAX : health > 0){
 					//loading
-					int percent = health / healthAdd;
-					float sec = MAX / healthAdd - percent;
-					setStatusBar(player, text.replace("%counter", "" + (int)sec), 1 - sec/10);
+					setStatusBar(player, text1, 1 - sec/10);
 					health += loadUp ? healthAdd : -healthAdd;
 				} else {
 					//done

@@ -1,18 +1,6 @@
 Alpha:
-- fix tab list V
-  * Player - k /d - as / p
-  * ------ - time - -------
-  * Team players              all ffa players
-  * green -----------------   Red -----------
-  * enemy players             spectators
-  * Red -------------------
-  * spectators
-  
 - Fix grenades displaying correct      V
 - Make stuns have the correct damage   V
-- Implement level system (!) V
-- Make last location & inventory compatible V --> a flaw with reboot
-- no other commands but FPSCaste, or defined V
 - timelimit team with most points win V, except matchbonus V
  	playerScore = int( (winnerScale * ((gameLength/60) * spm))*(player.timePlayed["total"] / gameLength) );
  	WinnerScale is the multiplier of a win (1x), loss (0.5x), or tie (0.75x).
@@ -25,33 +13,20 @@ Alpha:
 	TimePlayed is seconds played, and it is divided by the GameLength. Basically if you are in the server when the match starts and play through to the end, you get 1.
 	
 	total x 10
-- implement fpscaste command prefix V
-- Add chat channel all, match and team V
 
 
 Bugs:
-Stop when no servers -> nullpointer V
-isEnemyTo(935) nullpointer on nametagreceiveevent V
+weapons not working
 
 ----------------------------
 
 Beta:
-- Implement zooming V
-- Make CTF and DEM
-- Start basic killstreak system
-- create system for tasks using boss health V
-- Create running system V
-- Start weapon rewrite V
-- final fix on inventory/teleport
-
-Bugs: 
-- Fix tab list
-- fix inventory saving, again. V
+- Make DEM
 
 Full release:
 - Create health regen system
 - Complete Weapon rewrite V
-- Make classes including perks and killstreaks V
+- Make classes including perks and killstreaks 
 - Finish killstreaks
 
 1.1:

@@ -373,10 +373,6 @@ public class FPSPlayer {
 			resetPlayerInfo();
 			getPlayer().setGameMode(GameMode.SURVIVAL); 
 			
-			
-			getPlayer().getInventory().clear();
-			clearArmor();
-			
 			FPSCaste.getMatch(matchID).addPlayer(player);
 			Freeze();
 			Invis();
@@ -433,6 +429,9 @@ public class FPSPlayer {
 			
 			unFreeze();
 			unInvis();
+			
+			getPlayer().getInventory().clear();
+			clearArmor();
 		}
 		
 		

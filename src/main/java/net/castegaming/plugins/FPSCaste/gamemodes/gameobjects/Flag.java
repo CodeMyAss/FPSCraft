@@ -1,9 +1,11 @@
 package net.castegaming.plugins.FPSCaste.gamemodes.gameobjects;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
+import net.castegaming.plugins.FPSCaste.util.StatusBarAPI;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -103,37 +105,50 @@ public abstract class Flag extends GameObject{
 			new BukkitRunnable() {
 				@Override
 				public void run() {
-					//if (!getHolder().equals(team)){
-						boolean containsTeamMates = false;
-						boolean containsEnemies = false;
-						
-						for (String name : getNearPlayers(matchID)){
-							if (FPSCaste.getFPSPlayer(name).getTeam().equals(team)){
-								containsTeamMates = true;
-							} else {
-								containsEnemies = true;
-							}
-							int total = 100 - (Math.round(100/time * captureProgress % 100));
-							FPSCaste.getFPSPlayer(name).createTextBar(text.replaceAll("%time", total+""), total);
-						}
-						
-						if (containsTeamMates){
-							if(!containsEnemies){
-								if (captureProgress+1 == time){
-									setCapturing(false);
-									onCapture(startingName, matchID, team);
-									cancel();
-								} else {
-									captureProgress++;
-								}
-							}
+					boolean containsTeamMates = false;
+					boolean containsEnemies = false;
+					int total = 100 - (Math.round(100 / time * captureProgress % 100));
+					
+					Set<String> nearplayers = getNearPlayers(matchID);
+					for (String name : nearplayers) {
+						if (FPSCaste.getFPSPlayer(name).getTeam().equals(team)) {
+							containsTeamMates = true;
 						} else {
-							setCapturing(false);
-							cancel();
+							containsEnemies = true;
 						}
-					//}
+						
+						FPSCaste.getFPSPlayer(name).createTextBar(text.replaceAll("%counter", total + ""), total);
+					}
+
+					if (containsTeamMates) {
+						if (!containsEnemies) {
+							if (captureProgress + 1 == time) {
+								flagTaken(startingName, matchID, FPSCaste.getFPSPlayer(startingName).getTeam());
+								cancel();
+							} else {
+								captureProgress++;
+							}
+						}
+					} else {
+						setCapturing(false);
+						cancel();
+					}
 				}
 			}.runTaskTimer(FPSCaste.getInstance(), 0, 1);
+		}
+	}
+
+	/**
+	 * 
+	 * @param startingName
+	 * @param matchID
+	 * @param team
+	 */
+	protected void flagTaken(String startingName, int matchID, teamName team) {
+		setCapturing(false);
+		onCapture(startingName, matchID, team);
+		for (String name : getNearPlayers(matchID)){
+			StatusBarAPI.removeStatusBar(name);
 		}
 	}
 }
