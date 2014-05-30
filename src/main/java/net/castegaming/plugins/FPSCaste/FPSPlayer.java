@@ -385,7 +385,7 @@ public class FPSPlayer {
 			e.printStackTrace();
 			badMsg("Tried to place you in a match, but the teleporting went wrong. Try again later");
 			//keep matchID for some reasons i dont know yet
-			isIngame = false;
+			leave();
 		}
 	}
 
@@ -538,6 +538,8 @@ public class FPSPlayer {
 			    		giveClass();
 			    		updateXPbar();
 			    	}
+		    	} else {
+		    		throw new NullPointerException("Spawning was not succesfull");
 		    	}
 		    }
 		}, 10L);

@@ -1,5 +1,6 @@
 package net.castegaming.plugins.FPSCaste;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -102,9 +103,9 @@ public class Match {
 	private GameMode mode;
 	
 	/**
-	 * Broadcasting values, as ticks
+	 * Broadcasting values, as seconds
 	 */
-	private List<Integer> CurrentBroadCastValues;
+	private List<Integer> currentBroadCastValues;
 
 	/**
 	 * The schedulerID for the current scheduled broadcast.
@@ -198,7 +199,7 @@ public class Match {
 		
 		firstKill = true;
 		currentPlayers = 0;
-		CurrentBroadCastValues = new LinkedList<Integer>(broadCastValues);
+		currentBroadCastValues = new LinkedList<Integer>(broadCastValues);
 		/*================start first scheduler====================*/
 		
 		startingtime = System.currentTimeMillis();
@@ -227,21 +228,10 @@ public class Match {
 		state = gameState.PLAYING;
 		setTime(mode.getTicks());
 		CheckTimeScheduler();
-		timeScheduler();
 
 		broadcast("The match has started! Enjoy");
-		System.out.println(playtime);
 		// endgame scheduler
-		finaltime_scheduler = Bukkit
-				.getServer()
-				.getScheduler()
-				.scheduleSyncDelayedTask(FPSCaste.getInstance(),
-						new Runnable() {
-							@Override
-							public void run() {
-								endGameTime();
-							}
-						}, playtime);
+		endgameScheduler();
 
 		// unfreeze all the players
 		for (String name : players.keySet()) {
@@ -252,6 +242,23 @@ public class Match {
 		}
 	}
 	
+	/**
+	 * 
+	 */
+	private void endgameScheduler() {
+		if (finaltime_scheduler  >= 0) Bukkit.getServer().getScheduler().cancelTask(finaltime_scheduler);
+		finaltime_scheduler = Bukkit
+				.getServer()
+				.getScheduler()
+				.scheduleSyncDelayedTask(FPSCaste.getInstance(),
+						new Runnable() {
+							@Override
+							public void run() {
+								endGameTime();
+							}
+						}, playtime);
+	}
+
 	/**
 	 * Starts the game ticker, which runs every second
 	 */
@@ -362,6 +369,10 @@ public class Match {
 		return (int) Math.round((winnerScale * (matchtime * spm))*(playtime / matchtime));
 	}
 	
+	/**
+	 * Get the time the match played in seconds
+	 * @return
+	 */
 	public int getMatchTime(){
 		int matchtime = getMode().GetMatchTime()  <= 20 ? getMode().GetMatchTime() : 20;
 		if (Integer.parseInt(getPlayTime().split(":")[0]) != getMode().GetMatchTime()){
@@ -714,8 +725,8 @@ public class Match {
 			//mili  time the game has left
 			long timeleft = endTime() - timeplayed - startingtime;
 			
-			String minutes = (int) Math.ceil(timeleft/1000/60) + "";
-			String seconds = (int) Math.ceil((timeleft/1000) % 60) + "";
+			String minutes = (int) Math.floor(timeleft/1000/60) + "";
+			String seconds = (int) Math.floor((timeleft/1000) % 60) + "";
 			
 			if (minutes.length() < 2){
 				minutes = "0" + minutes;
@@ -734,17 +745,14 @@ public class Match {
 	 * @return String [minutes]:[seconds]
 	 */
 	public String getTimeLeftBroadcast(){
-		if (CurrentBroadCastValues.isEmpty()){
+		if (currentBroadCastValues.isEmpty()){
 			return "00:00";
 		}
 		
 		//mili  time the game has left
-		long timeleft = CurrentBroadCastValues.get(0)*50;
-		
-		CurrentBroadCastValues.get(0);
-		
-		String minutes = (int) Math.ceil(timeleft/1000/60) + "";
-		String seconds = (int) Math.ceil((timeleft/1000) % 60) + "";
+		int secleft = currentBroadCastValues.get(0);
+		String minutes = (int) Math.ceil(secleft/60) + "";
+		String seconds = (int) Math.ceil(secleft % 60) + "";
 		
 		if (minutes.length() < 2){
 			minutes = "0" + minutes;
@@ -766,7 +774,7 @@ public class Match {
 	private long timeLeft() {
 		long playtimemili = playtime*50;
 		long endtime = startingtime + playtimemili;
-		long time = endtime - (System.currentTimeMillis() - startingtime); //- startingtime;
+		long time = endtime - (System.currentTimeMillis() - startingtime) - startingtime;
 		return time;
 	}
 	
@@ -786,18 +794,19 @@ public class Match {
 		startingtime = System.currentTimeMillis();
 		playtime = time;
 		Bukkit.getServer().getScheduler().cancelTask(scheduler);
-		CurrentBroadCastValues = new LinkedList<Integer>(broadCastValues);
+		currentBroadCastValues = new LinkedList<Integer>(broadCastValues);
 		CheckTimeScheduler();
 		timeScheduler();
+		endgameScheduler();
 	}
 	
 	/**
 	 * Checks the values and removes it when they were in the past
 	 */
 	private void CheckTimeScheduler() {
-		for (int i=CurrentBroadCastValues.size()-1; i>=0 ; i--){
-			if (CurrentBroadCastValues.get(i) >= timeLeft()/50){
-				CurrentBroadCastValues.remove(i);
+		for (int i=currentBroadCastValues.size()-1; i>=0 ; i--){
+			if (currentBroadCastValues.get(i) >= timeLeft()/50){
+				currentBroadCastValues.remove(i);
 			} else {
 				return;
 			}
@@ -808,26 +817,26 @@ public class Match {
 	 * Creates a new timeScheduler for the next broadcast time.
 	 */
 	public void timeScheduler(){
-		if (CurrentBroadCastValues.isEmpty()){
+		if (currentBroadCastValues.isEmpty()){
 			return;
 		} 
 		
-		/**
-		 * ticks to millis
-		 */
-		long nextBroadcastTime = CurrentBroadCastValues.get(0)*50;
-		long timeLeft = timeLeft();
-		long schedulertime = (int) Math.ceil(((timeLeft - nextBroadcastTime))/50);
-		scheduler = Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
+		long nextBroadcastTime = currentBroadCastValues.get(0)*20;
+		
+		//-20 because we schedule on next tick, and it should be the same tick
+		long schedulertime = timeLeft()/50 - nextBroadcastTime - 20;
+		
+		scheduler = new BukkitRunnable(){
 			@Override
 			public void run() {
-				broadcast("Game time left: " + getTimeLeftBroadcast());
-				if (CurrentBroadCastValues.size() > 0){
-					CurrentBroadCastValues.remove(0);
+				//TODO fix broadcast
+				broadcast("Game time left: " + getTimeLeft());
+				if (currentBroadCastValues.size() > 0){
+					currentBroadCastValues.remove(0);
 					timeScheduler();
 				}
 			}
-		}, schedulertime);
+		}.runTaskLater(FPSCaste.getInstance(), schedulertime).getTaskId();
 	}
 	
 	public boolean isHardcore(){
