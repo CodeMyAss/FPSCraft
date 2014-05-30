@@ -20,6 +20,7 @@ import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Weapon;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
 import net.castegaming.plugins.FPSCaste.storage.PlayerStorage;
+import net.castegaming.plugins.FPSCaste.util.BossHealthUtil;
 import net.castegaming.plugins.FPSCaste.util.StatusBarAPI;
 import net.castegaming.plugins.FPSCaste.util.Util;
 
@@ -33,6 +34,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.mcsg.double0negative.tabapi.TabAPI;
 
 public class FPSPlayer {
@@ -449,7 +451,7 @@ public class FPSPlayer {
 	public void join(teamName name) {
 		goodMsg("You have joined the " + name.toString() + "!");
 		getMatch().add(name, player);
-		joinStuff();
+		resetPlayerInfo();
 		spawn();
 		
 		if (getMatch().getState().equals(gameState.PREGAME)){
@@ -507,20 +509,9 @@ public class FPSPlayer {
 	public void Invis(){
 		getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 999999999, 1));
 	}
-	
-	/**
-	 * Sets some variables<br/>
-	 * giveClass(0<br/>
-	 * unInvis()<br/>
-	 * unFreeze()<br/>
-	 * resetPlayerInfo()
-	 */
-	public void joinStuff(){
-		resetPlayerInfo();
-	}
 
 	/**
-	 * Spawns the player for the first time<br/>
+	 * Spawns the player and gives him his stuff<br/>
 	 * Only when he is not death, due to the way teleport works :/<br/>
 	 * <br/>
 	 * - giveClass() only when he has a valid team
@@ -528,36 +519,24 @@ public class FPSPlayer {
 	 */
 	public void spawn() {
 		if (!isIngame) return;
-		
-		//create delay because bukkit is slow :/
-		Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
-		    public void run() {
-		    	if (!getPlayer().isDead() && isIngame){
-			    	getPlayer().teleport(getMatch().spawn(getTeam()));
-			    	if (!getTeam().equals(teamName.SPECTATOR)){
-			    		giveClass();
-			    		updateXPbar();
-			    	}
-		    	} else {
-		    		throw new NullPointerException("Spawning was not succesfull");
+		new BukkitRunnable(){
+			@Override
+			public void run() {
+				getPlayer().teleport(getSpawn());
+				if (!getTeam().equals(teamName.SPECTATOR)){
+		    		giveClass();
+		    		updateXPbar();
 		    	}
-		    }
-		}, 10L);
+			}
+		}.runTaskLater(FPSCaste.getInstance(), 5);
 	}
 	
-	public void respawn(){
-		//create delay because bukkit is slow :/
-			Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
-			  public void run() {
-				 if (!getPlayer().isDead() && isIngame){
-					 getPlayer().teleport(getMatch().respawn(getTeam()));
-					 if (!getTeam().equals(teamName.SPECTATOR)){
-					    giveClass();
-					    updateXPbar();
-					 }
-				 }
-			 }
-			}, 10L);
+	private Location getSpawn(){
+		if (getMatch().getState().equals(gameState.PREGAME) || getTeam().equals(teamName.SPECTATOR)){
+			return getMatch().spawn(getTeam());
+		} else {
+			return getMatch().respawn(getTeam());
+		}
 	}
 
 	/**
@@ -1360,7 +1339,9 @@ public class FPSPlayer {
 	
 	/**
 	 * Creates a timer utilising the boss health bar
-	 * @param time the time in ticks
+	 * @param time time in seconds
+	 * @param text
+	 * @param done
 	 */
 	public void createTimer(int time, String text, String done){
 		StatusBarAPI.displayLoadingBar(text, done, getPlayer(), time, true);
@@ -1371,7 +1352,7 @@ public class FPSPlayer {
 	 * @param text The text to set
 	 */
 	public void createTextBar(String text) {
-		createTextBar(text, 100);
+		createTextBar(text, 1);
 	}
 	
 	/**

@@ -11,6 +11,7 @@ import net.castegaming.plugins.FPSCaste.enums.teamName;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -113,13 +114,9 @@ public class PlayerListener implements Listener {
 	public void respawn(PlayerRespawnEvent e){
 		FPSPlayer p = FPSCaste.getFPSPlayer(e.getPlayer().getName());
 		if (p.isIngame()){
-			if (p.getMatch().getState().equals(gameState.PREGAME) || p.getTeam().equals(teamName.SPECTATOR)){
-				p.spawn();
-			} else {
-				p.respawn();
-			}
+			p.spawn();
 		} else {
-			e.setRespawnLocation(Bukkit.getServer().getWorld("world").getSpawnLocation());
+			e.setRespawnLocation(Bukkit.getServer().getWorlds().get(0).getSpawnLocation());
 		}
 	}
 	
@@ -129,59 +126,45 @@ public class PlayerListener implements Listener {
 		FPSPlayer player = FPSCaste.getFPSPlayer(name);
 		
 		if (player.isIngame() && player.getMatch().getState().equals(gameState.PLAYING)){
-			player.zoomOut();
+			if (runners.containsKey(name)) removeRunning(name);
 			
-			if (runners.containsKey(name)){
-				Bukkit.getServer().getScheduler().cancelTask(runners.get(name));
-				runners.remove(name);
-			}
-			if (e.isSprinting()){
-				//scheduleStamina(name, 5, false);
-				runners.put(name, Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Runnable() {
-					@Override
-					public void run() {
-						if (Bukkit.getServer().getPlayer(name) != null && Bukkit.getServer().getPlayer(name).getFoodLevel() == 6){
-							Bukkit.getServer().getScheduler().cancelTask(runners.get(name));
-							runners.remove(name);
-						} else {
-							Bukkit.getServer().getPlayer(name).setFoodLevel(Bukkit.getServer().getPlayer(name).getFoodLevel()-1);
-						}
-					} 
-				}, 5, 5));
-			} else {
-				//scheduleStamina(name, 10, true);
-				runners.put(name, Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin,new Runnable() {
-					@Override
-					public void run() {
-						if (Bukkit.getServer().getPlayer(name) != null && Bukkit.getServer().getPlayer(name).getFoodLevel() == 20){
-							Bukkit.getServer().getScheduler().cancelTask(runners.get(name));
-							runners.remove(name);;
-						} else {
-							Bukkit.getServer().getPlayer(name).setFoodLevel(Bukkit.getServer().getPlayer(name).getFoodLevel()+1);
-						}
-					}
-				}, 10, 10));
-			}
+			player.zoomOut();
+			scheduleStamina(name, e.isSprinting() ? 5 : 15, !e.isSprinting());
 		}
 	}
 	
+	/**
+	 * Schedules a stamina task
+	 * @param name the name from he {@link Player}
+	 * @param delay the delay for each task
+	 * @param full to go up or down
+	 */
 	private void scheduleStamina(final String name, final int delay, final boolean full){
 		runners.put(name, Bukkit.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			@Override
 			public void run() {
-				if (Bukkit.getServer().getPlayer(name) != null){
-					if (Bukkit.getServer().getPlayer(name).getFoodLevel() > 20 || Bukkit.getServer().getPlayer(name).getFoodLevel() < 6){
-						Bukkit.getServer().getScheduler().cancelTask(runners.get(name));
-						Bukkit.getServer().getPlayer(name).setFoodLevel(full ? 20 : 6);
-						runners.remove(name);
+				Player p = Bukkit.getServer().getPlayer(name);
+				if (p != null){
+					if (p.getFoodLevel() > 20 || p.getFoodLevel() < 6){
+						p.setFoodLevel(full ? 20 : 6);
+						removeRunning(name);
 					} else {
-						Bukkit.getServer().getPlayer(name).setFoodLevel(Bukkit.getServer().getPlayer(name).getFoodLevel()+(full ? 1 : -1));
+						p.setFoodLevel(p.getFoodLevel()+(full ? 1 : -1));
 					}
 				} else {
-					Bukkit.getServer().getScheduler().cancelTask(runners.get(name));
+					removeRunning(name);
 				}
 			}
-		}, 0, delay));
+		}, full ? 0 : delay, delay));
+	}
+	
+	/**
+	 * Make this {@link Player} stop running
+	 * @param name the name from the {@link Player}
+	 */
+	void removeRunning(String name){
+		Bukkit.getServer().getScheduler().cancelTask(runners.get(name));
+		runners.remove(name);
 	}
 	
 	@EventHandler

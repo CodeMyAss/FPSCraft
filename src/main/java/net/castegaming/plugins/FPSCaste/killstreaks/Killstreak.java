@@ -183,7 +183,6 @@ public abstract class Killstreak implements Listener{
 	public boolean damage(Entity entity, LivingEntity damagee, DamageCause cause, double damage){
 		EntityDamageByEntityEvent event = new EntityDamageByEntityEvent(entity, damagee, cause, damage);
 		if (!event.isCancelled()){
-			System.out.println(damagee.getHealth() + " " + damage);
 			damagee.damage(damage > damagee.getHealth() ? damagee.getHealth() : damage, entity);
 		}
 		return !event.isCancelled();

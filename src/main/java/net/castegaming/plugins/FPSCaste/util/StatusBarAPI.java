@@ -74,7 +74,7 @@ public class StatusBarAPI {
      * @param percent a decimal percent in the range (0,1]
      */
     public static void setStatusBar(Player player, String text, float percent) {
-
+    	removeStatusBar(player);
         FakeDragon dragon = DRAGONS.containsKey(player) ? DRAGONS.get(player) : null;
 
         if(text.length() > 64)
@@ -132,35 +132,51 @@ public class StatusBarAPI {
         }
     }
     
+    /**
+     * 
+     * @param text
+     * @param completeText
+     * @param player
+     * @param healthAdd
+     * @param delay
+     * @param loadUp
+     */
     public static void displayLoadingBar(final String text, final String completeText, final Player player, final int healthAdd, final long delay, final boolean loadUp){
     	setStatusBar(player, text, loadUp ? 0 : 1);
     	final int MAX = 300;
     	
 		new BukkitRunnable(){
-			int health = (loadUp ? 0 : 1);
+			int health = (loadUp ? healthAdd : MAX-healthAdd);
 
 			@Override
 			public void run(){
-				if((loadUp ? health < MAX : health > 0)){
+				if(health == -1){
+					//remove
+					removeStatusBar(player);
+					cancel();
+				} else if (loadUp ? health < MAX : health > 0){
 					//loading
-					setStatusBar(player, text, health/300);
-					health = loadUp ? health + healthAdd : health - healthAdd;
+					int percent = health / healthAdd;
+					float sec = MAX / healthAdd - percent;
+					setStatusBar(player, text.replace("%counter", "" + (int)sec), 1 - sec/10);
+					health += loadUp ? healthAdd : -healthAdd;
 				} else {
 					//done
 					setStatusBar(player, completeText, loadUp ? 1 : 0);
-					new BukkitRunnable(){
-						@Override
-						public void run(){
-							removeStatusBar(player);
-						}
-					}.runTaskLater(FPSCaste.getInstance(), 40L);
-
-					this.cancel();
+					health = -1;
 				}
 			}
 		}.runTaskTimer(FPSCaste.getInstance(), delay, delay);
 	}
 
+    /**
+     * 
+     * @param text
+     * @param completeText
+     * @param player
+     * @param secondsDelay
+     * @param loadUp
+     */
 	public static void displayLoadingBar(final String text, final String completeText, final Player player, final int secondsDelay, final boolean loadUp){
 		final int healthChangePerSecond = 300 / secondsDelay;
 

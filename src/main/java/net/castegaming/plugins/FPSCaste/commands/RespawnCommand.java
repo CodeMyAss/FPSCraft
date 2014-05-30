@@ -29,7 +29,7 @@ public class RespawnCommand extends FPSCommandBase {
 		FPSPlayer player = FPSCaste.getFPSPlayer(getName());
 		if (!(player.getMatch().getState().equals(gameState.PREGAME) || player.getMatch().getState().equals(gameState.ENDING))){
 			player.addDeath(getName());
-			player.respawn();
+			player.spawn();
 		} else {
 			player.badMsg("Cannot respawn if the game has not started, or has allready ended.");
 		}

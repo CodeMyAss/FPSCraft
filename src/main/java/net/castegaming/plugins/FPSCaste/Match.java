@@ -482,7 +482,7 @@ public class Match {
 		if (currentPlayers == 1 && state.equals(gameState.PREGAME)){
 			Counter("Starting in %counter seconds!", "Starting now!", switchWaidTime, "startGame");
 		}
-		mode.playerJoin(playername);
+		mode.playerJoin( playername);
 	}
 	
 	/**
@@ -829,8 +829,7 @@ public class Match {
 		scheduler = new BukkitRunnable(){
 			@Override
 			public void run() {
-				//TODO fix broadcast
-				broadcast("Game time left: " + getTimeLeft());
+				broadcast("Game time left: " + getTimeLeftBroadcast());
 				if (currentBroadCastValues.size() > 0){
 					currentBroadCastValues.remove(0);
 					timeScheduler();
@@ -998,25 +997,23 @@ public class Match {
 		});
 	}
 	
+	/**
+	 * Runs a counter for everyone on the team
+	 * @param used The string to display. Use %counter for the current count
+	 * @param done The string to display when its done
+	 * @param time The time this runs for, in seconds
+	 * @param runnable The method to run when the counting is done
+	 */
 	private void Counter(final String used, final String done, final int time, final Runnable runnable) {
+		for (String name : getPlayers().keySet()){
+			FPSCaste.getFPSPlayer(name).createTimer(time, used, done);
+		}
+		
 		new BukkitRunnable() {
-			private int counter = time;
 			@Override
 			public void run() {
-				String message = used.replaceAll("%counter", counter + "");
-				if (counter == 0){
-					message = done;
-					runnable.run();
-				}
-				if (counter == -1){
-					cancel();
-				} else {
-					for (String name : getPlayers().keySet()){
-						FPSCaste.getFPSPlayer(name).createTextBar(message, Math.round(100/switchWaidTime * counter));
-					}
-				}
-				counter--;
+				runnable.run(); 
 			}
-		}.runTaskTimer(FPSCaste.getInstance(), 0, 20);
+		}.runTaskLater(FPSCaste.getInstance(), time*20);
 	}
 }
