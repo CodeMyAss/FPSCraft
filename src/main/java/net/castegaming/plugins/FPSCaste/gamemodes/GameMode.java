@@ -138,7 +138,7 @@ public abstract class GameMode {
 	public abstract void handleNear(String name);
 	
 	/**
-	 * Handles waht todo when a player is not near 
+	 * Handles what todo when a player is not near 
 	 * @param name
 	 */
 	public abstract void handleNotNear(String name);
@@ -255,7 +255,7 @@ public abstract class GameMode {
 	 * Returns why this match has ended
 	 * @return
 	 */
-	public String EndedReason(){
+	public String endedReason(){
 		return endedReason;
 	}
 
@@ -410,55 +410,34 @@ public abstract class GameMode {
 		}
 		return tie;
 	}
-	
+
 	/**
-	 * Returns the clsoest flag or null.<br/>
-	 * Only null if the player is offline, or there are no flags. (this is impossible)<br/>
-	 * Previous flags have priority over the next one if the distance is exacly the same.
-	 * @param name
+	 * Checks if there are more then 0 rounds in the list left
 	 * @return
 	 */
-	public Flag getClosest(String name){
-		if (Bukkit.getServer().getPlayer(name) != null){
-			Location l = Bukkit.getServer().getPlayer(name).getLocation();
-			Flag flag = null;
-			double distance = 9999;
-			
-			for (GameObject o : gameObjects){
-				if (o instanceof Flag && l.getWorld().equals(o.getLocation().getWorld()) && l.distance(o.getLocation()) <= distance){
-					distance = l.distance(o.getLocation());
-					flag = (Flag) o;
-				}
-			}
-			return flag;
-		}
-		return null;
-	}
-	
-	public List<Flag> getFlags(){
-		List<Flag> flags = new LinkedList<Flag>();
-		for (GameObject o : gameObjects){
-			if (o instanceof Flag) {
-				
-				flags.add((Flag) o);
-			}
-		}
-		return flags;
-	}
-
 	public boolean hasNextRound() {
-		// TODO Auto-generated method stub
-		return false;
+		return roundLength.size() > 0;
 	}
 
+	/**
+	 * Get the length of the round in minutes
+	 * @return
+	 */
 	public int getRound() {
 		return roundLength.get(0);
 	}
 	
+	/**
+	 * Get the length of the round in minutes in a string
+	 * @return
+	 */
 	public String getRoundTime() {
 		return roundLength.get(0) + "";
 	}
 	
+	/**
+	 * Removes the first round, which causes the next one to be the current
+	 */
 	public void nextRound(){
 		roundLength.remove(0);
 	}

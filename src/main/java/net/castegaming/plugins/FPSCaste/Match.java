@@ -120,7 +120,7 @@ public class Match {
 	
 	private void Tick20() {
 		if (mode.isFinished() && getState().equals(gameState.PLAYING)){
-			endGame(mode.EndedReason(), true);
+			endGame(mode.endedReason(), true);
 		} else {
 			for (String name : getPlayers().keySet()){
 				if (!FPSCaste.getFPSPlayer(name).getTeam().equals(teamName.SPECTATOR)){
@@ -154,6 +154,7 @@ public class Match {
 		openMatches.add(matchID);
 		
 		this.list = list;
+		startTicker();
 		newMatch();
 	}
 
@@ -177,13 +178,19 @@ public class Match {
 				tries++;
 			}
 			
-			//set new map
-			Map.addAvailable(this.mapID);
-			Map.removeAvailable(mapID);
-			this.mapID = mapID;
-			broadcast("Switching to a new map! (" + getMap().getMapName() + ")");
+			if (mapID < 0){
+				broadcast("Couldnt not find an available map! Keeping the same");
+			} else {
+				//set new map
+				Map.addAvailable(this.mapID);
+				Map.removeAvailable(mapID);
+				this.mapID = mapID;
+				broadcast("Switching to a new map! (" + getMap().getMapName() + ")");
+				
+				mode = list.getMode();
+			}
 			
-			mode = list.getMode();
+
 			mode.init(getMap());
 		}
 		
@@ -197,17 +204,6 @@ public class Match {
 		startingtime = System.currentTimeMillis();
 		//setTime(mode.getRound()*60*20);
 		state = gameState.PREGAME;
-		
-		new BukkitRunnable() {
-			@Override
-			public void run() {
-				try {
-					Tick20();
-				} catch (Exception e){
-					cancel();
-				}
-			}
-		}.runTaskTimer(FPSCaste.getInstance(), 0, 20);
 	}
 	
 	/**
@@ -217,7 +213,7 @@ public class Match {
 		if (mode.hasNextRound()){
 			mode.nextRound();
 			broadcast("Next round started!");
-			setTime(mode.getRound()*60*20);
+			setTime(mode.getTicks());
 		} else {
 			endGameTime();
 		}
@@ -229,7 +225,7 @@ public class Match {
 	public void startGame() {
 		 startingtime = System.currentTimeMillis();
 		 state = gameState.PLAYING;
-		
+		 
 		CheckTimeScheduler();
 		timeScheduler();
 		
@@ -251,6 +247,23 @@ public class Match {
 		}
 	}
 	
+	/**
+	 * Starts the game ticker, which runs every second
+	 */
+	private void startTicker() {
+		new BukkitRunnable() {
+			@Override
+			public void run() {
+				try {
+					System.out.println(getPlayTime());
+					Tick20();
+				} catch (Exception e){
+					cancel();
+				}
+			}
+		}.runTaskTimer(FPSCaste.getInstance(), 0, 20);
+	}
+
 	public void endGameTime(){
 		broadcast("The game has ended because of the time! (" + getPlayTime() + ")");
 		if (mode.isTie()){
@@ -267,7 +280,8 @@ public class Match {
 	
 	/**
 	 * Ends this match.
-	 * @param message 
+	 * @param message the message to end with
+	 * @param newgame whether we should play a new game
 	 */
 	public void endGame(final String message, final boolean newgame){
 		state = gameState.ENDING;
@@ -275,41 +289,11 @@ public class Match {
 		Bukkit.getServer().getScheduler().cancelTask(finaltime_scheduler);
 		rollBack();
 		
-		int matchtime = getMode().GetMatchTime()  <= 20 ? getMode().GetMatchTime() : 20;
-		if (Integer.parseInt(getPlayTime().split(":")[0]) != getMode().GetMatchTime()){
-			matchtime = Integer.parseInt(getPlayTime().split(":")[0]) + 1;
-		}
-		
 		for (String name : players.keySet()){
 			FPSPlayer p = FPSCaste.getFPSPlayer(name);
-			
-			/**
-			 * ======================
-			 * MATCHBONUS CALCULATION
-			 * ======================
-			 */
 			p.Freeze();
 			p.savePlayerData();
-			double winnerScale = 0.5;
-			if (!mode.isFFA() && !mode.isTie() && mode.getCurrentWinner().contains(p.getTeam().name())){
-				winnerScale = 1;
-			} else if (mode.isFFA()){
-				if (p.getKills() == mode.GetMaxPoints()){
-					if (mode.isTie()){
-						winnerScale = 0.75;
-					} else {
-						winnerScale = 1;
-					}
-				}
-			} else if (mode.isTie()){
-				if (mode.getCurrentWinner().contains(p.getTeam().name())){
-					winnerScale = 0.75;
-				}
-			}
-			
-			double spm = (p.getRank() * 0.61 + 1) / 2 + 3;
-			int playtime = p.getPlaytime();
-			int playerScore = (int) Math.round((winnerScale * (matchtime * spm))*(playtime / matchtime));
+			int playerScore = getMatchBonus(p);
 			p.goodMsg("Here is your matchbonus!");
 			p.givePoints(playerScore);
 		}
@@ -344,6 +328,45 @@ public class Match {
 	}
 	
 	/**
+	 * ======================<br/>
+	 * MATCHBONUS CALCULATION<br/>
+	 * ======================<br/>
+	 * @param p the player to calculate for
+	 * @return the bonus he receives
+	 */
+	private int getMatchBonus(FPSPlayer p) {
+		double winnerScale = 0.5;
+		if (!mode.isFFA() && !mode.isTie() && mode.getCurrentWinner().contains(p.getTeam().name())){
+			winnerScale = 1;
+		} else if (mode.isFFA()){
+			if (p.getKills() == mode.GetMaxPoints()){
+				if (mode.isTie()){
+					winnerScale = 0.75;
+				} else {
+					winnerScale = 1;
+				}
+			}
+		} else if (mode.isTie()){
+			if (mode.getCurrentWinner().contains(p.getTeam().name())){
+				winnerScale = 0.75;
+			}
+		}
+		
+		double spm = (p.getRank() * 0.61 + 1) / 2 + 3;
+		int playtime = p.getPlaytime();
+		int matchtime = getMatchTime();
+		return (int) Math.round((winnerScale * (matchtime * spm))*(playtime / matchtime));
+	}
+	
+	public int getMatchTime(){
+		int matchtime = getMode().GetMatchTime()  <= 20 ? getMode().GetMatchTime() : 20;
+		if (Integer.parseInt(getPlayTime().split(":")[0]) != getMode().GetMatchTime()){
+			matchtime = Integer.parseInt(getPlayTime().split(":")[0]) + 1;
+		}
+		return matchtime;
+	}
+
+	/**
 	 * End with a kill
 	 * @param killer
 	 * @param death
@@ -352,6 +375,10 @@ public class Match {
 		endGame("The last kill was from " + killer + ", killing " + death + ". Playtime: " + getPlayTime(), true);
 	}
 	
+	/**
+	 * Sets a new playlist, effective next round/match
+	 * @param list
+	 */
 	public void setPlayList(PlayList list){
 		this.list = list;
 	}
@@ -367,35 +394,40 @@ public class Match {
 	}
 	
 	/**
-	 * Boradcasts a message to everyone in this match<br/>
+	 * Broadcasts a message to everyone in this match<br/>
 	 * The team passed is the team which will get a red message.
-	 * @param string The mesage to send
+	 * @param string The message to send
+	 * @param team the team were using
 	 */
 	public void broadcastTeamGood(String message, teamName team) {
-		for (String name : players.keySet()){
-			if (players.get(name) == team){
-				//Teammate
-				message(name, ChatColor.GREEN + message);
-			} else {
-				//enemy
-				message(name, ChatColor.DARK_RED + message);
-			}
-		}
+		broadcastTeamMessage(message, team, ChatColor.GREEN, ChatColor.DARK_RED);
 	}
 	
 	/**
-	 * Boradcasts a message to everyone in this match<br/>
+	 * Broadcasts a message to everyone in this match<br/>
 	 * The team passed is the team which will get a red message.
-	 * @param string The mesage to send
+	 * @param string The message to send
+	 * @param team the team were using
 	 */
 	public void broadcastTeamBad(String message, teamName team) {
+		broadcastTeamMessage(message, team, ChatColor.DARK_RED, ChatColor.GREEN);
+	}
+	
+	/**
+	 * Broadcasts a message to everyone in this match<br/>
+	 * @param message The message to send
+	 * @param team the team were using
+	 * @param sameteam Color for same team player
+	 * @param otherteam Color for other team player
+	 */
+	public void broadcastTeamMessage(String message, teamName team, ChatColor sameteam, ChatColor otherteam) {
 		for (String name : players.keySet()){
-			if (players.get(name) == team){
+			if (getPlayerTeam(name) == team){
 				//Teammate
-				message(name, ChatColor.DARK_RED + message);
+				message(name, sameteam + message);
 			} else {
 				//enemy
-				message(name, ChatColor.GREEN + message);
+				message(name, otherteam + message);
 			}
 		}
 	}
@@ -552,25 +584,25 @@ public class Match {
 
 	/**
 	 * Returns all the enemies of this player
-	 * @param team
+	 * @param player the name of the player
 	 * @return a List<String> filled with the names
 	 */
 	public List<String> getEnemies(String player) {
-		List<String> EnemyPlayers = new LinkedList<String>();
+		List<String> enemyPlayers = new LinkedList<String>();
 		teamName playerteam = getPlayerTeam(player);
 		
 		if (mode.isFFA()){
-			EnemyPlayers.addAll(players.keySet());
-			EnemyPlayers.remove(player);
-			return EnemyPlayers;
+			enemyPlayers.addAll(players.keySet());
+			enemyPlayers.remove(player);
+			return enemyPlayers;
 		}
 		
 		for(String name : players.keySet()){
 			if (!players.get(name).equals(playerteam)){
-				EnemyPlayers.add(name);
+				enemyPlayers.add(name);
 			}
 		}
-		return EnemyPlayers;
+		return enemyPlayers;
 	}
 	
 	/**
@@ -588,6 +620,10 @@ public class Match {
 		return teammates;
 	}
 	
+	/**
+	 * Breaks a block if it can be broken.
+	 * @param hitBlock
+	 */
 	public void breakOneBlock(Block hitBlock) {
 		try{
 			breakableBlocks.valueOf(hitBlock.getType().toString());
@@ -597,6 +633,10 @@ public class Match {
 		} catch (IllegalArgumentException Ex){}
 	}
 
+	/**
+	 * breaks 3 blocks, the one passed, and the block above and below
+	 * @param hitBlock
+	 */
 	public void break3Blocks(Block hitBlock) {
 		breakOneBlock(hitBlock);
 		breakOneBlock(hitBlock.getRelative(BlockFace.DOWN));
@@ -610,18 +650,17 @@ public class Match {
 	public void break27Blocks(Block hitBlock) {
 		break3Blocks(hitBlock);
 		break3Blocks(hitBlock.getRelative(BlockFace.NORTH));
-		break3Blocks(hitBlock.getRelative(BlockFace.NORTH).getRelative(BlockFace.EAST));
+		break3Blocks(hitBlock.getRelative(BlockFace.NORTH_EAST));
 		
 		break3Blocks(hitBlock.getRelative(BlockFace.EAST));
-		break3Blocks(hitBlock.getRelative(BlockFace.EAST).getRelative(BlockFace.SOUTH));
+		break3Blocks(hitBlock.getRelative(BlockFace.SOUTH_EAST));
 		
 		break3Blocks(hitBlock.getRelative(BlockFace.SOUTH));
-		break3Blocks(hitBlock.getRelative(BlockFace.SOUTH).getRelative(BlockFace.WEST));
+		break3Blocks(hitBlock.getRelative(BlockFace.SOUTH_WEST));
 		
 		break3Blocks(hitBlock.getRelative(BlockFace.WEST));
-		break3Blocks(hitBlock.getRelative(BlockFace.WEST).getRelative(BlockFace.NORTH));
+		break3Blocks(hitBlock.getRelative(BlockFace.NORTH_WEST));
 	}
-	
 	
 	
 	/**
@@ -750,6 +789,7 @@ public class Match {
 	 */
 	private void CheckTimeScheduler() {
 		for (int i=CurrentBroadCastValues.size()-1; i>=0 ; i--){
+			System.out.println(timeLeft()+ " " + timeLeft()/50);
 			if (CurrentBroadCastValues.get(i) >= timeLeft()/50){
 				System.out.println("removed " + CurrentBroadCastValues.get(i) + " " + timeLeft()/50);
 				CurrentBroadCastValues.remove(i);

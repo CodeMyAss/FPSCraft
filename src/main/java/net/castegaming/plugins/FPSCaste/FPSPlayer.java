@@ -196,8 +196,7 @@ public class FPSPlayer {
 			List<ItemStack> armorList = (List<ItemStack>)config.getConfig().get("oldInv.armor");
 			ItemStack[] armor = armorList.toArray(new ItemStack[0]); 
 			
-			String[] loc = config.getConfig().getStringList("oldInv.location").toArray(new String[6]);
-			Location teleportPlace = new Location(Bukkit.getServer().getWorld(loc[0]), Double.parseDouble(loc[1]), Double.parseDouble(loc[2]), Double.parseDouble(loc[3]), Float.parseFloat(loc[4]), Float.parseFloat(loc[5]));
+			Location teleportPlace = Util.StringToLoc(config.getConfig().getString("oldInv.location"));
 			config.set("oldInv", null);
 			saveConfig();
 			

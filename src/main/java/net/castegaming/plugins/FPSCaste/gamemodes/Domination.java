@@ -15,7 +15,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.scheduler.BukkitRunnable;
 
-public class Domination extends GameMode {
+public class Domination extends FlagGameMode {
 
 	public Domination() {
 		super(gameType.DOM, 10, 200);

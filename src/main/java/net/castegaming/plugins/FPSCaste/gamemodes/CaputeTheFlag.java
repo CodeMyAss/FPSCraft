@@ -15,7 +15,7 @@ import net.castegaming.plugins.FPSCaste.map.Map;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 
-public class CaputeTheFlag extends GameMode {
+public class CaputeTheFlag extends FlagGameMode {
 	
 	public CaputeTheFlag() {
 		super(gameType.CTF, 10, -1);
