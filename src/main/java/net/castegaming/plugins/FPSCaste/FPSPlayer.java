@@ -1302,7 +1302,7 @@ public class FPSPlayer {
 	 * this will also try to zoom out
 	 */
 	public void reload() {
-		if (getWeapon() != null &&getWeapon().getMagezines() > 0){
+		if (getWeapon() != null && getWeapon().getMagezines() > 0){
 			stopReloading();
 			reloading = getPlayer().getInventory().getHeldItemSlot();
 			if (getWeapon().canReload()){

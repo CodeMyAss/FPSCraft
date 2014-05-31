@@ -125,18 +125,13 @@ public class Weapon {
 	 * @return
 	 */
 	public int getMagezines(ItemStack item){
-		if (weapon instanceof Gun){
-			if (item.getItemMeta().hasLore()){
-				if (item.getItemMeta().getLore().size() > 0){
-					List<String> lore = item.getItemMeta().getLore();
-					for (String l : lore){
-						if (l.endsWith("magazines left")){
-							return Integer.parseInt(l.split(" ")[1]);
-						}
-					}
-					
+		if (weapon instanceof Gun && item.getItemMeta().hasLore() && item.getItemMeta().getLore().size() > 0){
+			List<String> lore = item.getItemMeta().getLore();
+			for (String l : lore) {
+				if (l.endsWith("magezines left")) {
+					return Integer.parseInt(l.split(" ")[1]);
 				}
-			} 
+			}
 		}
 		return -1;
 	}
