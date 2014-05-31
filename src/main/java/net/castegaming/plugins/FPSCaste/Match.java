@@ -327,7 +327,7 @@ public class Match {
 					for (String player : playerList){
 						if (Bukkit.getServer().getPlayer(player) != null && FPSCaste.getFPSPlayer(player).isIngame()){
 							players.put(player, teamName.SPECTATOR);
-							FPSCaste.getFPSPlayer(player).resetPlayerInfo();
+							FPSCaste.getFPSPlayer(player).resetPlayerInfoAndStats();
 							FPSCaste.getFPSPlayer(player).spawn();
 						}
 					}

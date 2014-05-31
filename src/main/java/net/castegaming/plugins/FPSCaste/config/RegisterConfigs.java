@@ -146,7 +146,7 @@ public class RegisterConfigs {
 	}
 	
 	private void loadWeapons() {
-		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 5, 1.0, 1, new HashMap<String, Object>());
+		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 5, 1.0, new HashMap<String, Object>());
 		new InitWeapons(plugin);
 	}
 	

@@ -117,6 +117,17 @@ public abstract class WeaponContainer {
 		this(id, name, type, group, delay, damage, 1, 1);
 	}
 	
+	/**'
+	 * 
+	 * @param id
+	 * @param name
+	 * @param type
+	 * @param group
+	 * @param delay
+	 * @param damage
+	 * @param level
+	 * @param amount
+	 */
 	protected WeaponContainer(int id, String name, GunClass type, String group, int delay, double damage, int level, int amount) {
 		this.itemID = id;
 		this.name = name;

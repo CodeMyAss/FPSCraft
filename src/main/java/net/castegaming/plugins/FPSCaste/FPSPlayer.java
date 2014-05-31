@@ -433,15 +433,27 @@ public class FPSPlayer {
 			getPlayer().getInventory().clear();
 			clearArmor();
 		}
-		
-		
+	}
+	
+	/**
+	 * Runs resetPlayerInfo and resetStats
+	 */
+	public void resetPlayerInfoAndStats(){
+		resetPlayerInfo();
+		resetStats();
+	}
+	
+	/**
+	 * 
+	 */
+	private void resetStats() {
 		kills = 0;
 		deaths = 0;
 		assists = 0;
 		points = 0;
-		matchPlayTime = 0;		
+		matchPlayTime = 0;	
 	}
-	
+
 	/**
 	 * Lets a player join the team specified!
 	 * @param name the {@link teamName} the fpsplayer should join
@@ -522,7 +534,8 @@ public class FPSPlayer {
 			public void run() {
 				getPlayer().teleport(getSpawn());
 				if (!getTeam().equals(teamName.SPECTATOR)){
-		    		giveClass();
+					resetPlayerInfo();
+					giveClass();
 		    		updateXPbar();
 		    	}
 			}
