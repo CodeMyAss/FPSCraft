@@ -165,6 +165,8 @@ public class FPSCaste extends JavaPlugin{
 		YamlConfiguration lists = Config.getConfig(Configs.PLAYLIST.toString());
 		boolean save = false;
 		for (String list : lists.getKeys(false)) {
+			if (list.equals("checked")) continue;
+			
 			if (!lists.contains(list + ".options")) {
 				FPSCaste.log("playlist " + list + " does not have options defined! skipping...");
 				lists.set(list + ".options", new LinkedList<String>(Arrays.asList(new String[] {"TDM", "MAPNAMEHERE" })));

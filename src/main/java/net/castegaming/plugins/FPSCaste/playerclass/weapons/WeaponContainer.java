@@ -44,7 +44,7 @@ public abstract class WeaponContainer {
 	 */
 	public static WeaponContainer getWeapon(String name){
 		for (WeaponContainer weapon : weapons.values()){
-			if (weapon.getName().equals(name)){
+			if (weapon.getName().equalsIgnoreCase(name)){
 				return weapon;
 			}
 		}
@@ -146,7 +146,7 @@ public abstract class WeaponContainer {
 	}
 	
 	public ItemStack constructItem() {
-		ItemStack item = new ItemStack(itemID, 1);
+		ItemStack item = new ItemStack(itemID, amount);
 		ItemMeta m = item.getItemMeta();
 		m.setDisplayName(ChatColor.WHITE + "" + ChatColor.BOLD + name);
 		item.setItemMeta(m);

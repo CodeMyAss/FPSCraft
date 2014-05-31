@@ -23,6 +23,8 @@ Bugs:
 ----------------------------
 
 Beta:
+- update to UUID
+- data storage on SQL 
 - Make DEM
 - Points per gamemode
 - Gamemode configs

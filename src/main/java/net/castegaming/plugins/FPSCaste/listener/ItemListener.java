@@ -31,7 +31,6 @@ public class ItemListener implements Listener {
 	@EventHandler
 	public void ItemDropEvent(PlayerDropItemEvent e){  
 		if (FPSCaste.getFPSPlayer(e.getPlayer().getName()).isIngame() && !FPSCaste.getFPSPlayer(e.getPlayer().getName()).isFrozen()){
-			System.out.println(e.getPlayer().getItemInHand());
 			if (e.getPlayer().getItemInHand().getType().equals(Material.AIR)){
 				e.getPlayer().getInventory().setItemInHand(e.getItemDrop().getItemStack());
 			} else {

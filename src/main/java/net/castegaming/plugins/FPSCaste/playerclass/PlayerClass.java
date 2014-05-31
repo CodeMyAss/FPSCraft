@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.config.Config;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Weapon;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
@@ -111,7 +112,7 @@ public class PlayerClass {
 	
 	/**
 	 * Loads all the class options form config into a {@link PlayerClass}
-	 * @param config the onfigurationsection the class is in
+	 * @param config the {@link ConfigurationSection} the class is in
 	 * @param defaultClass if this class is a default class(true), or not (false)
 	 */
 	private void load(ConfigurationSection config, boolean defaultClass){
@@ -128,8 +129,10 @@ public class PlayerClass {
 			
 			//load weapons
 			for (String weaponName : config.getConfigurationSection("weapons").getKeys(false)){
+				weaponName = weaponName.replace(',', '.');
 				WeaponContainer container = WeaponContainer.getWeapon(weaponName);
 				if (container == null){
+					FPSCaste.log("playerclass " + classname + ": Could not find weapon " + weaponName);
 					container = WeaponContainer.getWeapon("Default");
 				}
 				Weapon w = new Weapon(container);

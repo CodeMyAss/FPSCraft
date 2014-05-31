@@ -119,33 +119,69 @@ public class Weapon {
 		return getMagezines(getItem());
 	}
 	
+	/**
+	 * Gets the amount of magazines from
+	 * @param item
+	 * @return
+	 */
 	public int getMagezines(ItemStack item){
 		if (weapon instanceof Gun){
 			if (item.getItemMeta().hasLore()){
 				if (item.getItemMeta().getLore().size() > 0){
-					return Integer.parseInt(item.getItemMeta().getLore().get(0).split(" ")[1]);
+					List<String> lore = item.getItemMeta().getLore();
+					for (String l : lore){
+						if (l.endsWith("magazines left")){
+							return Integer.parseInt(l.split(" ")[1]);
+						}
+					}
+					
 				}
 			} 
 		}
 		return -1;
 	}
 	
+	/**
+	 * Sets the amount of magazines to the passed itemStack
+	 * @param magezines
+	 * @param item
+	 * @return the changed item
+	 */
 	public ItemStack setMagezines(int magezines, ItemStack item){
 		if (weapon instanceof Gun){
 			ItemMeta m = item.getItemMeta();
-			m.setLore(new LinkedList<String>(Arrays.asList(new String[]{"Has " + magezines + " magezines left"})));
+			List<String> lore = setMagezinesLore(m.getLore(), magezines);
+			m.setLore(lore);
 			item.setItemMeta(m);
 		}
 		return item;
 	}
 	
+	/**
+	 * Sets the magezines from the getItem() item
+	 * @param magezines
+	 */
 	public void setMagezines(int magezines){
-		if (weapon instanceof Gun){
-			ItemMeta m = getItem().getItemMeta();
-			m.setLore(new LinkedList<String>(Arrays.asList(new String[]{"Has " + (getMagezines()-1) + " magezines left"})));
-			getItem().setItemMeta(m);
-		}
+		setMagezines(magezines, getItem());
 	}
+	
+	/**
+	 * Checks the lore for a string ending with "magazines left" and edits that one
+	 * @param lore
+	 * @param magezines
+	 * @return the edited lore
+	 */
+	private List<String> setMagezinesLore(List<String> lore, int magezines){
+		if (lore == null) {
+			lore = new LinkedList<String>(Arrays.asList(new String[]{"Has " + magezines + " magezines left"}));
+		} else {
+			for (String l : lore){
+				if (l.endsWith("magazines left"))lore.set(lore.indexOf(l), "Has " + magezines + " magezines left"); break;
+			}
+		}
+		return lore;
+	}
+	
 	 public Weapon() {
 		// TODO Auto-generated constructor stub
 	}

@@ -1,7 +1,7 @@
 Grenadier:
  weapons:
   Famas: ["Grenade launcher"]
-  Spas_12: ["Silencer"]
+  Spas 12: ["Silencer"]
  equipment: Grenade
  special: Stun
  perks: ["Scavenger", "Stopping Power", "Commando"]
@@ -12,7 +12,7 @@ Grenadier:
 First Recon:
  weapons:
   Ump45: ["Holographic"]
-  .44_Magnum: ["Knife"]
+  ',44 Magnum': ["Knife"]
  equipment: Semtex
  special: Flash
  perks: ["Marathon", "Lightweight", "Steady Aim"]
@@ -22,7 +22,7 @@ First Recon:
  
 Overwatch:
  weapons:
-  L86_lsw: ["Red dot", "Grip"]
+  L86 LSW: ["Red dot", "Grip"]
   AT4: []
  equipment: Semtex
  special: Flash
@@ -33,8 +33,8 @@ Overwatch:
  
 Scout Sniper:
  weapons:
-  Barrett .50 cal: ["Hearthbeat", "FMJ"]
-  Usp .45: ["Silencer"]
+  'Barrett ,50 cal': ["Hearthbeat", "FMJ"]
+  'Usp ,45': ["Silencer"]
  equipment: Tactical Insertion
  special: Smoke
  perks: ["Sleight of Hand", "Coldblooded", "Scrambler"]
@@ -44,7 +44,7 @@ Scout Sniper:
  
 Riot Control:
  weapons:
-  Riot_Shield: []
+  Riot Shield: []
   PP2000: ["Red dot"]
  equipment: Blast Shield
  special: Stun

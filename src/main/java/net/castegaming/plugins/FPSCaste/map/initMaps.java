@@ -12,6 +12,7 @@ public class initMaps {
 		YamlConfiguration MapConfig = Config.getConfig("maps");
 		
 		for (String key : MapConfig.getKeys(false)){
+			if (!MapConfig.isConfigurationSection(key)) continue;
 			
 			String map = MapConfig.getString(key + ".mapname").toLowerCase();
 			World world = Bukkit.getServer().getWorld(MapConfig.getString(key + ".world"));

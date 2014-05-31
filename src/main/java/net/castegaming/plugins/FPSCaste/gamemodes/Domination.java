@@ -9,6 +9,7 @@ import net.castegaming.plugins.FPSCaste.enums.gameType;
 import net.castegaming.plugins.FPSCaste.gamemodes.gameobjects.DominationFlag;
 import net.castegaming.plugins.FPSCaste.gamemodes.gameobjects.GameObject;
 import net.castegaming.plugins.FPSCaste.map.Map;
+import net.castegaming.plugins.FPSCaste.util.StatusBarAPI;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
 
 import org.bukkit.Material;
@@ -47,7 +48,7 @@ public class Domination extends FlagGameMode {
 
 	@Override
 	public void handleNotNear(String name) {
-		
+		StatusBarAPI.removeStatusBar(name);
 	}
 
 	@Override

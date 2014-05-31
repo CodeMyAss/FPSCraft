@@ -43,17 +43,24 @@ public class RegisterConfigs {
 		if (Config.getConfig(Configs.CONFIG.toString()) == null){
 			plugin.saveDefaultConfig();
 			FPSCaste.log("Created " + Configs.CONFIG.toString() + "!", Level.INFO);
+		} else {
+			checkConfig(Configs.CONFIG.toString());
 		}
 		
 		Configs[] configsStrings = Configs.values();
 		String[] folderStrings = {"players", "maps", "weapons"};
 		
 		for (Configs s : configsStrings){
+			if (s.equals(Configs.CONFIG)) continue;
+			
 			if (Config.getConfig(s.toString()) == null){
 				Config.createConfig(s.toString());
 				FPSCaste.log("Created " + s + ".yml!", Level.INFO);
 			} else {
-				checkConfig(s.toString());
+				if (!Config.getConfig(s.toString()).getBoolean("checked")){
+					checkConfig(s.toString());
+					setChecked(s);
+				}
 			}
 		}
 		for (String s : folderStrings){
@@ -90,6 +97,12 @@ public class RegisterConfigs {
 		}
 		
 		return !changed;
+	}
+	
+	private void setChecked(Configs c){
+		YamlConfiguration conf = Config.getConfig(c.toString());
+		conf.set("checked", true);
+		Config.saveConfig(c.toString(), conf);
 	}
 	
 	private void loadConfigValues() {
@@ -140,6 +153,7 @@ public class RegisterConfigs {
 	private void loadDefaultClasses() {
 		YamlConfiguration classes = Config.getConfig(Configs.DEFAULTCLASSES.toString());
 		for (String classname : classes.getKeys(false)){
+			if (classname.equals("checked")) continue;
 			new PlayerClass(classname);
 			FPSCaste.log("Created default class: " + classname);
 		}

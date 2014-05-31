@@ -3,7 +3,6 @@
  */
 package net.castegaming.plugins.FPSCaste.gamemodes.playlist;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

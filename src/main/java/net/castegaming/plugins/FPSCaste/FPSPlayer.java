@@ -551,6 +551,10 @@ public class FPSPlayer {
 		}
 	}
 	
+	/**
+	 * Checks if the current class matches the class from config<br/>
+	 * If not, it updates the {@link PlayerClass}
+	 */
 	public void checkPlayerClass(){
 		if (!config.getSelectedClass().equals(currentClass.getName())){
 			currentClass = new PlayerClass(player);
@@ -915,7 +919,7 @@ public class FPSPlayer {
 	 * Gets handled at the match side.
 	 */
 	public void handleRightClick() {
-		getMatch().handleRightCLickNear(player);
+		getMatch().handleRightClickNear(player);
 		if (getWeapon() != null){
 			useRight();
 		}
@@ -1285,7 +1289,7 @@ public class FPSPlayer {
 	 * this will also try to zoom out
 	 */
 	public void reload() {
-		if (getWeapon() != null){
+		if (getWeapon() != null &&getWeapon().getMagezines() > 0){
 			stopReloading();
 			reloading = getPlayer().getInventory().getHeldItemSlot();
 			if (getWeapon().canReload()){

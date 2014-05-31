@@ -896,7 +896,7 @@ public class Match {
 	 * Hanldes the right click of a player
 	 * @param name the player to check
 	 */
-	public void handleRightCLickNear(String name){
+	public void handleRightClickNear(String name){
 		if (isNearLocation(name)){
 			mode.handleRightClick(name);
 		}
