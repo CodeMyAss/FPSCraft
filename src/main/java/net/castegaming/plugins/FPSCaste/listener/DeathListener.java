@@ -106,13 +106,17 @@ public class DeathListener implements Listener {
 		    player.getMatch().broadcastTeamBad(message, player.getTeam());
 			    
 			if (killer != null){
-				if (!killer.equals(player)) {
+				//add kill for killer, if its not the same
+				if (!killer.getName().equals(playername)){
 					killer.addKill(playername);
-				} else {
-					killer.getMatch().handleKill(killer.getName(), playername);
 				}
+				
+				//he died
+				player.addDeath(killer.getName());
+			} else {
+				//killer doenst exist, and its not himself
+				//who could this be? :O
 			}
-		    player.addDeath(killer.getName());
         } 
 	}
 }
