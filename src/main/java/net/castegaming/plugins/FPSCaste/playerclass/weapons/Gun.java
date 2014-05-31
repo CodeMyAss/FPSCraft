@@ -115,11 +115,12 @@ public class Gun extends WeaponContainer{
 	@Override
 	public void useRight(FPSPlayer p) {
 		Vector velocity = p.getPlayer().getEyeLocation().getDirection().multiply(distance/10); 
-        if (!p.isZooming()){
-        	changeDirection(velocity, spread);
-        } else {
-        	changeDirection(velocity, spread/3);
-        }
+		double spread = this.spread;
+		
+        if (!p.isZooming())spread /= 3;
+        
+        changeDirection(velocity, spread/3);
+        
         Arrow arrow = p.getPlayer().launchProjectile(Arrow.class); 
         arrow.setMetadata("FPSweapon", new FixedMetadataValue(FPSCaste.getInstance(), getName()));
         arrow.setVelocity(velocity); 

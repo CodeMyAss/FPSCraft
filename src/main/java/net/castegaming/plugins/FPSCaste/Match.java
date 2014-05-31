@@ -8,6 +8,7 @@ import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -307,7 +308,7 @@ public class Match {
 		
 		for (String name : players.keySet()){
 			FPSPlayer p = FPSCaste.getFPSPlayer(name);
-			p.Freeze();
+			p.freeze();
 			p.savePlayerData();
 			int playerScore = getMatchBonus(p);
 			p.goodMsg("Here is your matchbonus!");
@@ -651,8 +652,9 @@ public class Match {
 		try{
 			breakableBlocks.valueOf(hitBlock.getType().toString());
 			brokenBlocks.put(hitBlock, hitBlock.getType());
-			hitBlock.getDrops().clear();
-			hitBlock.breakNaturally();
+			hitBlock.getWorld().playEffect(hitBlock.getLocation(), Effect.STEP_SOUND, hitBlock.getType());
+			hitBlock.setType(Material.AIR);
+			
 		} catch (IllegalArgumentException Ex){}
 	}
 
@@ -811,11 +813,12 @@ public class Match {
 	 * Checks the values and removes it when they were in the past
 	 */
 	private void CheckTimeScheduler() {
+		int secleft = (int) (timeLeft()/1000);
 		for (int i=currentBroadCastValues.size()-1; i>=0 ; i--){
-			if (currentBroadCastValues.get(i) >= timeLeft()/50){
-				currentBroadCastValues.remove(i);
+			if (currentBroadCastValues.get(i) >= secleft){
+				currentBroadCastValues.remove(currentBroadCastValues.get(i));
 			} else {
-				return;
+				//return;
 			}
 		}
 	}
@@ -933,10 +936,10 @@ public class Match {
 					broadcastTeamGood("First kill made by " + attacker, p1.getTeam());
 					points += Points.FIRST_BLOOD;
 				}
+			} else {
+				points =  mode.isHardcore() ? -50 : 0;
 			}
 			totalPoints = points;
-		} else {
-			totalPoints =  mode.isHardcore() ? -50 : 0;
 		}
 		return totalPoints;
 	}

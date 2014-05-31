@@ -374,7 +374,7 @@ public class FPSPlayer {
 			getPlayer().setGameMode(GameMode.SURVIVAL); 
 			
 			FPSCaste.getMatch(matchID).addPlayer(player);
-			Freeze();
+			freeze();
 			Invis();
 			
 			spawn();
@@ -389,7 +389,7 @@ public class FPSPlayer {
 	/**
 	 * Freezes the player
 	 */
-	public void Freeze() {
+	public void freeze() {
 		isFrozen = true;
 	}
 	
@@ -427,9 +427,6 @@ public class FPSPlayer {
 			getPlayer().setExp(0);
 			getPlayer().setExhaustion(0.0f);
 			
-			unFreeze();
-			unInvis();
-			
 			getPlayer().getInventory().clear();
 			clearArmor();
 		}
@@ -463,10 +460,13 @@ public class FPSPlayer {
 		getMatch().add(name, player);
 		resetPlayerInfo();
 		spawn();
+		unInvis();
 		
 		if (getMatch().getState().equals(gameState.PREGAME)){
-			Freeze();
+			freeze();
 			goodMsg("You will be unfrozen when the match starts!");
+		} else {
+			unFreeze();
 		}
 	}
 	
@@ -619,19 +619,24 @@ public class FPSPlayer {
 	}
 	
 	public void useRight(boolean uses) {
+		
 		if (getWeapon() != null){
 			if (uses){
 				if (getWeapon().isGun() && canShoot()){
 					if (getWeapon().getBullets() < 2){
-						 if (getWeapon().getMagezines() > 0){
-							 reload();
-						 } else {
-							 //switch weapon
-						 }
+						if (getWeapon().isEmpty()){
+							 if (getWeapon().getMagezines() > 0){
+								 reload();
+							 } else {
+								 //empty and no magezines
+							 }
+						} else {
+							// not empty, shoot once more and set empty
+							useRightShoot();
+							getWeapon().setEmpty();
+						}
 					}  else {
-						getWeapon().useRight();
-						shootingTime = System.currentTimeMillis();
-						getWeapon().setBullets(getWeapon().getBullets()-1);
+						useRightShoot();
 					}
 				} else {
 					getWeapon().useRight();
@@ -646,6 +651,12 @@ public class FPSPlayer {
 				getWeapon().useRight();
 			}
 		}
+	}
+	
+	private void useRightShoot(){
+		getWeapon().useRight();
+		shootingTime = System.currentTimeMillis();
+		getWeapon().setBullets(getWeapon().getBullets()-1);
 	}
 	
 	/**
@@ -1304,8 +1315,9 @@ public class FPSPlayer {
 	public void reload() {
 		if (getWeapon() != null && getWeapon().getMagezines() > 0){
 			stopReloading();
+			
 			reloading = getPlayer().getInventory().getHeldItemSlot();
-			if (getWeapon().canReload()){
+			if (getWeapon().canReload() && getWeapon().needsReload()){
 				getWeapon().reload();
 				goodMsg("Reloading...");
 				zoomOut();

@@ -3,6 +3,7 @@ package net.castegaming.plugins.FPSCaste.util;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -11,7 +12,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.BlockIterator;
 
 public class Util {
 
@@ -116,6 +119,12 @@ public class Util {
 		return i;
 	}
 
+	/**
+	 * 
+	 * @param location
+	 * @param maxrange
+	 * @return
+	 */
 	public static List<Block> blocksInRange(Location location, int maxrange) {
 		Location l;
 		List<Block> blocks = new LinkedList<Block>();
@@ -131,6 +140,50 @@ public class Util {
 			}
 		}
 		return blocks;
+	}
+	
+	/**
+	 * 
+	 * @param start
+	 * @param end
+	 * @param maxrange
+	 * @return
+	 */
+	public static List<Block> blocksInLine(Location start, Location end, int maxrange) {
+		BlockIterator bItr = new BlockIterator(start.getWorld(),
+				start.toVector(), end.toVector().subtract(start.toVector()),
+				start.getY(), maxrange);
+		List<Block> blocks = new LinkedList<Block>();
+
+		Block block;
+		Location loc;
+		int bx, by, bz;
+		double ex, ey, ez;
+		// loop through player's line of sight
+		while (bItr.hasNext()) {
+			blocks.add(bItr.next());
+			/*
+			 * bx = block.getX(); by = block.getY(); bz = block.getZ(); // check
+			 * for entities near this block in the line of sight for
+			 * (LivingEntity e : livingE) { loc = e.getLocation(); ex =
+			 * loc.getX(); ey = loc.getY(); ez = loc.getZ(); if ((bx-.75 <= ex
+			 * && ex <= bx+1.75) && (bz-.75 <= ez && ez <= bz+1.75) && (by-1 <=
+			 * ey && ey <= by+2.5)) { // entity is close enough, set target and
+			 * stop plugin.target = e; break; } } }
+			 */
+		}
+		return blocks;
+	}
+	
+	/**'
+	 * 
+	 * @param blocks
+	 * @return
+	 */
+	public static boolean canSeeThrough(List<Block> blocks){
+		for (Block b : blocks){
+			if (!b.isEmpty()) return false;
+		}return true;
 	}
 
 	public static boolean isEqual(Location l1, Location l2) {
@@ -200,5 +253,32 @@ public class Util {
 		} catch (Exception e){
 			return -1;
 		}
+	}
+
+	/**
+	 * @param loc
+	 * @param radius
+	 * @return
+	 */
+	public static List<Entity> getNearEntities(Location loc, int radius) {
+		List<Entity> found = new ArrayList<Entity>();
+			 
+		for (Entity entity : loc.getWorld().getEntities()) {
+			if (isInBorder(loc, entity.getLocation(), radius)) {
+				found.add(entity);
+			}
+		}
+		return found;
+	}
+
+	/**
+	 * @param loc
+	 * @param location
+	 * @param radius
+	 * @return
+	 */
+	public static boolean isInBorder(Location center, Location notCenter, int range) {
+		if (!center.getWorld().getName().equals(notCenter.getWorld().getName())) return false;
+		return center.distanceSquared(notCenter) <= range*range;
 	}
 }

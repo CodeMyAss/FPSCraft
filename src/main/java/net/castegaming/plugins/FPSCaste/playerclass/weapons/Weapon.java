@@ -25,11 +25,7 @@ public class Weapon {
 	
 	private String owner;
 	
-	///////////// MAYBE
 	private int slot;
-	///////////// MAYBE
-
-	private long shootingTime;
 	
 	private ItemStack takenWeapon;
 	
@@ -37,12 +33,16 @@ public class Weapon {
 	
 	private int reloadTask = -1;
 	
+	/**
+	 * 
+	 * @param weapon
+	 */
 	public Weapon(WeaponContainer weapon) {
 		if (weapon != null){
 			this.weapon = weapon;
 			slot = weapon.getType().getSlot();
 		} else {
-			System.out.println("Weapon cannot be null!!");
+			throw new NullPointerException("Weapon cannot be null");
 		}
 	}
 	
@@ -98,9 +98,9 @@ public class Weapon {
 	public void take(){
 		if (owner != null && owner != "" ){
 			if (takenWeapon != null) giveBack();
-			
 			takenWeapon = getFPSPlayer().getPlayer().getInventory().getItem(slot);
 			getFPSPlayer().getPlayer().getInventory().setItem(slot, null);
+			getFPSPlayer().getPlayer().updateInventory();
 		}
 	}
 	
@@ -144,6 +144,7 @@ public class Weapon {
 	 */
 	public ItemStack setMagezines(int magezines, ItemStack item){
 		if (weapon instanceof Gun){
+			System.out.println("setting magezines " + magezines);
 			ItemMeta m = item.getItemMeta();
 			List<String> lore = setMagezinesLore(m.getLore(), magezines);
 			m.setLore(lore);
@@ -171,7 +172,7 @@ public class Weapon {
 			lore = new LinkedList<String>(Arrays.asList(new String[]{"Has " + magezines + " magezines left"}));
 		} else {
 			for (String l : lore){
-				if (l.endsWith("magazines left"))lore.set(lore.indexOf(l), "Has " + magezines + " magezines left"); break;
+				if (l.endsWith("magezines left"))lore.set(lore.indexOf(l), "Has " + magezines + " magezines left"); break;
 			}
 		}
 		return lore;
@@ -239,14 +240,14 @@ public class Weapon {
 	 */
 	public void reload() {
 		if (canReload()){
+			System.out.println("reload");
 			take();
 			reloadTask =  Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
 				
 				@Override
 				public void run() {
 					if (takenWeapon !=null){
-						takenWeapon.setAmount(weapon.getAmount());
-						takenWeapon = setMagezines(getMagezines(takenWeapon)-1, takenWeapon);
+						takenWeapon = setMagezines(getMagezines(takenWeapon)-1, constructItem());
 						reloadTask = -1;
 						giveBack();
 					}
@@ -322,5 +323,30 @@ public class Weapon {
 
 	public int getDelay() {
 		return weapon.getDelay();
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean needsReload() {
+		return getAmount() != weapon.getAmount() || isEmpty();
+	}
+
+	/**
+	 * Adds " - Empty" to the weapon name
+	 */
+	public void setEmpty() {
+		if (getItem() == null) return;
+		ItemMeta m = getItem().getItemMeta();
+		m.setDisplayName(m.getDisplayName() + " - Empty");
+		getItem().setItemMeta(m);
+	}
+	
+	/**
+	 * Checks if the weapon is empty
+	 * @return
+	 */
+	public boolean isEmpty(){
+		return getItem() != null && getItem().getItemMeta().getDisplayName().endsWith("Empty");
 	}
 }

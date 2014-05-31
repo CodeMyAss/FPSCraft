@@ -3,6 +3,7 @@ package net.castegaming.plugins.FPSCaste.listener;
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.FPSPlayer;
 import net.castegaming.plugins.FPSCaste.enums.breakableBlocks;
+import net.castegaming.plugins.FPSCaste.playerclass.weapons.Special;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
 import net.castegaming.plugins.FPSCaste.util.Explosion;
 
@@ -44,31 +45,37 @@ public class EntityDamageListener implements Listener {
 
 				    while(iterator.hasNext()) {
 				        hitBlock = iterator.next();
-				        if(hitBlock.getType().equals(Material.AIR)){
+				        if(!hitBlock.getType().equals(Material.AIR)){
 				            break;
 				        }
 				    }
 				    
-				    if (hitBlock.getType().equals(Material.TNT)){
-				    	new Explosion(arrow, 4, WeaponContainer.getWeapon("Tnt"), player.getName(), 5.0, false);
-				    	player.getMatch().breakOneBlock(hitBlock);
-				    	arrow.remove();
-				    } else {
-				    	try {
-					    	breakableBlocks.valueOf(hitBlock.getType().toString());
-					    	player.getMatch().break3Blocks(hitBlock);
+				    if (hitBlock != null){
+					    if (hitBlock.getType().equals(Material.TNT)){
+					    	Special w = (Special) WeaponContainer.getWeapon("Tnt");
+					    	new Explosion(hitBlock.getLocation(), w.getRange(), w, player.getName(), w.getDamage(), false, w.getEffecs());
+					    	player.getMatch().breakOneBlock(hitBlock);
 					    	arrow.remove();
-					    	
-					    } catch (IllegalArgumentException Ex){
-					    	Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-								
-								@Override
-								public void run() {
-									arrow.remove();
-									//player.getMatch().arrows.remove(arrow.getEntityId());
-								}
-							}, 300);
+					    } else {
+					    	try {
+						    	breakableBlocks.valueOf(hitBlock.getType().toString());
+						    	player.getMatch().break3Blocks(hitBlock);
+						    	arrow.remove();
+						    	
+						    } catch (IllegalArgumentException Ex){
+						    	Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+									
+									@Override
+									public void run() {
+										arrow.remove();
+										//player.getMatch().arrows.remove(arrow.getEntityId());
+									}
+								}, 300);
+						    }
 					    }
+				    } else {
+				    	//?
+				    	arrow.remove();
 				    }
 				}
 			}

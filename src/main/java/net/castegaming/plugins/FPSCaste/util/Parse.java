@@ -92,7 +92,7 @@ public class Parse {
 	 * @return the converted string.
 	 */
 	public static String ArrayToString(String[] list, String inbetween){ 
-		return Arrays.toString(list).replaceAll("\\[", "").replaceAll("\\]", "").replaceAll(", ",  inbetween);
+		return Arrays.toString(list).replace("[", "").replace("]", "").replace(", ",  inbetween);
 	}
 
 	/**
@@ -103,5 +103,15 @@ public class Parse {
 	 */
 	public static String parseString(String string, String fallback) {
 		return string != null ? string : fallback;
+	}
+
+	/**
+	 * @param object
+	 * @param fallback
+	 * @return
+	 */
+	public static String parseString(Object object, String fallback) {
+		if (object == null) return fallback;
+		return parseString((String)object, fallback);
 	}
 }

@@ -86,18 +86,18 @@ public class PlayerListener implements Listener {
 		String name = e.getPlayer().getName();
 		FPSPlayer player = FPSCaste.getFPSPlayer(name);
 		
-		if (player.isFrozen()){
-			double xfrom = e.getFrom().getX(); 
-		    double zfrom = e.getFrom().getZ();
-		        
-		    double xto = e.getTo().getX();
-		    double zto = e.getTo().getZ();
-		        
-		    if (!(xfrom == xto && zfrom==zto)){
-		        player.getPlayer().teleport(player.getPlayer());
-		    }
-		} else {
-			if (player.isIngame()){
+		if (player.isIngame()){
+			if (player.isFrozen()){
+				double xfrom = e.getFrom().getX(); 
+			    double zfrom = e.getFrom().getZ();
+			        
+			    double xto = e.getTo().getX();
+			    double zto = e.getTo().getZ();
+			        
+			    if (!(xfrom == xto && zfrom==zto)){
+			        player.getPlayer().teleport(player.getPlayer());
+			    }
+			} else {
 				player.handleMove();
 			}
 		}
@@ -124,6 +124,10 @@ public class PlayerListener implements Listener {
 	public void sprint(PlayerToggleSprintEvent e){
 		final String name = e.getPlayer().getName();
 		FPSPlayer player = FPSCaste.getFPSPlayer(name);
+		if (player.isFrozen()) {
+			e.setCancelled(true);
+			return;
+		}
 		
 		if (player.isIngame() && player.getMatch().getState().equals(gameState.PLAYING)){
 			if (runners.containsKey(name)) removeRunning(name);

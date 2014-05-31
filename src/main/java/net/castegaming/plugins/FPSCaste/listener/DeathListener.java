@@ -48,7 +48,11 @@ public class DeathListener implements Listener {
 				//clear drops untill i created class pickup system
 			}
 			
-	        if (lastDamageCause.getCause() == DamageCause.ENTITY_ATTACK) {
+			if (lastDamageCause == null || lastDamageCause.getCause() == DamageCause.SUICIDE){
+            	killer = player;
+            	weapon = null;
+                message = playername + " has suicided for no reason :/";
+	        } else if (lastDamageCause.getCause() == DamageCause.ENTITY_ATTACK) {
 	            EntityDamageByEntityEvent nEvent = (EntityDamageByEntityEvent) lastDamageCause;
 
 	            if (nEvent.getDamager() instanceof Player) {
@@ -86,11 +90,7 @@ public class DeathListener implements Listener {
             		}
             	} else {
             	}
-	        } else if (lastDamageCause.getCause() == DamageCause.SUICIDE){
-            	killer = player;
-            	weapon = null;
-                message = playername + " has suicided for no reason :/";
-	        }
+	        } 
 	        
 	        if (!(weapon == null)){
 	        	if (message == null){
@@ -108,10 +108,12 @@ public class DeathListener implements Listener {
 			    
 		    player.getMatch().broadcastTeamBad(message, player.getTeam());
 			    
-			if (!killer.equals(player)) {
-				killer.addKill(playername);
-			} else {
-				killer.getMatch().handleKill(killer.getName(), playername);
+			if (killer != null){
+				if (!killer.equals(player)) {
+					killer.addKill(playername);
+				} else {
+					killer.getMatch().handleKill(killer.getName(), playername);
+				}
 			}
 		    player.addDeath(killer.getName());
         } 
