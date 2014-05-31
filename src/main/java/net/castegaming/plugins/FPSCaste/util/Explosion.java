@@ -50,7 +50,7 @@ public class Explosion {
 					//both are ingamew
 					if (!player.getPlayer().isDead() && FPSCaste.getFPSPlayer(name).canDamage(player.getName())){
 						if(Util.canSeeThrough(Util.blocksInLine(loc, player.getPlayer().getLocation(), radius))){
-							double totalDamage = damage - (player.getPlayer().getLocation().distance(loc)*damagePerBlock);
+							double totalDamage = damage - (player.getPlayer().getLocation().distance(loc)*damagePerBlock) + damagePerBlock;
 							if (totalDamage < 0) totalDamage = 0;
 							
 							if (player.getPlayer().getHealth() - totalDamage <= 0) {

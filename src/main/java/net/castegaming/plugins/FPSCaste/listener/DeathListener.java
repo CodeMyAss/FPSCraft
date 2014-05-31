@@ -98,7 +98,7 @@ public class DeathListener implements Listener {
 				    	if (headshot) message += "☹";
 				    	message += "]- " + death.getName();
 				    } else {
-				        message = death.getName() + " has committed suicide";
+				        message = death.getName() + " has committed suicide using " + weapon.getName();
 				    }
 		        }
 	        }

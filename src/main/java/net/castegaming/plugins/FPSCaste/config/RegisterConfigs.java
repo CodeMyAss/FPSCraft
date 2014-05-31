@@ -148,8 +148,8 @@ public class RegisterConfigs {
 	
 	private void loadWeapons() {
 		//TODO load from file
-		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 5, 1.0, new HashMap<String, Object>());
-		new Special(WeaponContainer.getNextIDAvailable(), "Tnt", GunClass.SPECIAL, "NO-GROUP", 0, 20.0, 0, 0, new HashMap<String, Object>());
+		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 0, 1.0, new HashMap<String, Object>());
+		new Special(WeaponContainer.getNextIDAvailable(), "Tnt", GunClass.SPECIAL, "NO-GROUP", 0, 30.0, 0, 0, new HashMap<String, Object>());
 		new InitWeapons(plugin);
 	}
 	
