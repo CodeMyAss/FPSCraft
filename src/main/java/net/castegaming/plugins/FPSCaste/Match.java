@@ -1,6 +1,5 @@
 package net.castegaming.plugins.FPSCaste;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -485,7 +484,7 @@ public class Match {
 			//full now
 			openMatches.remove(matchID);
 		} 
-		
+		System.out.println("currentplayers="+currentPlayers);
 		//enderdragon timer
 		if (currentPlayers == 1 && state.equals(gameState.PREGAME)){
 			startPlayCountdown();
@@ -1026,4 +1025,10 @@ public class Match {
 			}
 		}.runTaskLater(FPSCaste.getInstance(), time*20);
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Match)) return false;
+        return ((Match)obj).getMatchID() == getMatchID();
+    }
 }

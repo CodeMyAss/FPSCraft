@@ -51,6 +51,7 @@ public class EntityDamageListener implements Listener {
 				    }
 				    
 				    if (hitBlock != null){
+				    	//TODO Loop over all explodibles
 					    if (hitBlock.getType().equals(Material.TNT)){
 					    	Special w = (Special) WeaponContainer.getWeapon("Tnt");
 					    	new Explosion(hitBlock.getLocation(), w.getRange(), w, player.getName(), w.getDamage(), false, w.getEffecs());
@@ -68,7 +69,6 @@ public class EntityDamageListener implements Listener {
 									@Override
 									public void run() {
 										arrow.remove();
-										//player.getMatch().arrows.remove(arrow.getEntityId());
 									}
 								}, 300);
 						    }
@@ -88,78 +88,69 @@ public class EntityDamageListener implements Listener {
 	 */
 	@EventHandler
 	public void playerAssistEvent(EntityDamageByEntityEvent e){
-		if (e.getEntity() instanceof Player){  
-			
-			//He who gets attacked is a player, continue.
-			String name = ((Player) e.getEntity()).getName();
-			FPSPlayer defender = FPSCaste.getFPSPlayer(name);
-			if (defender.isIngame()){
-				//he is ingame, continue
-				
-				FPSPlayer attacker;
-				WeaponContainer weapon;
-				boolean headshot = false;
-				double damage = -1;
-				
-				//check if the attacker is a player or an arrow
-				if (e.getDamager() instanceof Player){
-					//Fist to fist attack
-					if (defender.getPlayer().hasMetadata("FPSexplosion")){
-						String[] meta = defender.getPlayer().getMetadata("FPSexplosion").get(0).asString().split(":");
-						weapon = WeaponContainer.getWeapon(meta[0]);
-						damage = Double.parseDouble(meta[1]);
-					} else {
-						weapon = WeaponContainer.getWeapon("Knife");
-					}
-					attacker = FPSCaste.getFPSPlayer(((Player) e.getDamager()).getName());
-					
-				} else if (e.getDamager() instanceof Arrow){
-					//shoot with a bullet
-					Arrow arrow = (Arrow) e.getDamager();
-					
-					if (arrow.getShooter() instanceof Player){
-						attacker = FPSCaste.getFPSPlayer(((Player) arrow.getShooter()).getName());
-						
-						weapon = WeaponContainer.getWeapon(arrow.getMetadata("FPSweapon").get(0).asString());
-						double y = arrow.getLocation().getY();
-				        double shotY = e.getEntity().getLocation().getY();
-				        headshot = y - shotY > 1.35d;
-						
-					} else {
-						//skeleton or dispenser shot it.
-						e.setCancelled(true);
-						return;
-					}
-				} else {
-					//not currently attacked by our plugin, cancelling
-					e.setCancelled(true);
-					return;
-				}
-				
-				if (weapon != null){
-					if (defender.canDamage(attacker.getName())){
-						if (damage == -1){
-							damage = weapon.getDamage();
-						}
-						System.out.println(damage);
-						e.setDamage(headshot ? (int) Math.round(damage*1.3) : damage);
-						attacker.addAssist(true, name);
-						defender.addAssist(false, attacker.getName());
-					} else {
-						e.setCancelled(true);
-					}
-				} else {
-					//????
-				}
+		if (!(e.getEntity() instanceof Player)) return;
+		
+		//He who gets attacked is a player, continue.
+		String name = ((Player) e.getEntity()).getName();
+		FPSPlayer defender = FPSCaste.getFPSPlayer(name);
+		
+		if (!defender.isIngame()) return;
+		//he is ingame, continue
+
+		FPSPlayer attacker = null;
+		WeaponContainer weapon = null;
+		boolean headshot = false;
+		double damage = -1;
+
+		
+		if (defender.getPlayer().hasMetadata("FPSexplosion")){
+			//damaged by explosion
+			String[] meta = defender.getPlayer().getMetadata("FPSexplosion").get(0).asString().split(":");
+			weapon = WeaponContainer.getWeapon(meta[0]);
+			damage = Double.parseDouble(meta[1]);
+			defender.getPlayer().removeMetadata("FPSexplosion", FPSCaste.getInstance());
+		} else if (e.getDamager() instanceof Player) {
+			// Fist attack
+			weapon = WeaponContainer.getWeapon("Knife");
+			attacker = FPSCaste.getFPSPlayer(((Player) e.getDamager()).getName());
+		} else if (e.getDamager() instanceof Arrow) {
+			// shoot with a bullet
+			Arrow arrow = (Arrow) e.getDamager();
+
+			if (arrow.getShooter() instanceof Player) {
+				attacker = FPSCaste.getFPSPlayer(((Player) arrow.getShooter()).getName());
+
+				weapon = WeaponContainer.getWeapon(arrow.getMetadata("FPSweapon").get(0).asString());
+				double y = arrow.getLocation().getY();
+				double shotY = e.getEntity().getLocation().getY();
+				headshot = y - shotY > 1.35d;
+
 			} else {
-				//not ingame, so we dont care 
-				//e.setCancelled(true);
+				// skeleton or dispenser shot it.
+				e.setCancelled(true);
 				return;
 			}
 		} else {
-			//not a player which got shot
-			//e.setCancelled(true);
+			// not currently attacked by our plugin, cancelling
+			e.setCancelled(true);
 			return;
+		}
+
+		if (weapon != null) {
+			if (defender.canDamage(attacker.getName())) {
+				if (damage == -1) {
+					damage = weapon.getDamage();
+				}
+
+				e.setDamage(headshot ? (int) Math.round(damage * 1.3) : damage);
+				attacker.addAssist(true, name);
+				defender.addAssist(false, attacker.getName());
+			} else {
+				e.setCancelled(true);
+			}
+		} else {
+			// ????
+			e.setCancelled(true);
 		}
 	}
 }
