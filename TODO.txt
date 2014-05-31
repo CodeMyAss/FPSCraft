@@ -19,7 +19,7 @@ Bugs:
 - one map in playlist glitches
 - eating a weapon
 - running on full results in empty
-- die -> leave -> match ends -> join -> gear lost
+- die -> reload -> leave -> join -> gear lost
 - arrow hit on blocks
 - suicide pints TDM
 ----------------------------

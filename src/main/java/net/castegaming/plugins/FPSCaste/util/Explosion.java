@@ -60,7 +60,7 @@ public class Explosion {
 							player.getPlayer().addPotionEffects(effects);
 							
 							player.getPlayer().setMetadata("FPSexplosion", new FixedMetadataValue(FPSCaste.getInstance(), w + ":" + totalDamage + ":" + name));
-							player.getPlayer().damage(totalDamage, Bukkit.getServer().getPlayer(name));
+							player.getPlayer().damage(totalDamage, FPSCaste.getFPSPlayer(name).getPlayer());
 						}
 	                }
 				}

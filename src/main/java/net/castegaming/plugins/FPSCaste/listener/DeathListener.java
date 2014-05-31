@@ -45,7 +45,7 @@ public class DeathListener implements Listener {
 			
 			if (e.getDrops() != null){
 				e.getDrops().clear();
-				//clear drops untill i created class pickup system
+				//TODO create class pickup system
 			}
 			
 			if (lastDamageCause == null || lastDamageCause.getCause() == DamageCause.SUICIDE){
@@ -54,22 +54,20 @@ public class DeathListener implements Listener {
                 message = playername + " has suicided for no reason :/";
 	        } else if (lastDamageCause.getCause() == DamageCause.ENTITY_ATTACK) {
 	            EntityDamageByEntityEvent nEvent = (EntityDamageByEntityEvent) lastDamageCause;
-
 	            if (nEvent.getDamager() instanceof Player) {
 	            	//if damaged by a player, it means direct hit, aka a knife
-	            	if (death.getInventory().first(1) != -1){
-		        		killer = FPSCaste.getFPSPlayer(death.getInventory().getItem(death.getInventory().first(1)).getItemMeta().getLore().get(0));
-		        		weapon = WeaponContainer.getWeapon(death.getMetadata("FPSexplosion").get(0).toString().split(":")[1]);
+	            	if (death.hasMetadata("FPSexplosion")){
+		        		weapon = WeaponContainer.getWeapon(death.getMetadata("FPSexplosion").get(0).asString().split(":")[0]);
 		        	} else {
-		                killer = FPSCaste.getFPSPlayer(((Player) nEvent.getDamager()).getName());
 		                weapon = WeaponContainer.getWeapon("Knife");
 		        	}
+	            	killer = FPSCaste.getFPSPlayer(((Player) nEvent.getDamager()).getName());
 	            } else {
 	            	//not killed by a player entity?
 	            }
 	        } else if (lastDamageCause.getCause() == DamageCause.ENTITY_EXPLOSION){
-	        	killer = FPSCaste.getFPSPlayer(death.getMetadata("FPSexplosion").get(0).toString().split(":")[0]);
-	        	weapon = WeaponContainer.getWeapon(death.getMetadata("FPSexplosion").get(0).toString().split(":")[1]);
+	        	killer = FPSCaste.getFPSPlayer(death.getMetadata("FPSexplosion").get(0).asString().split(":")[0]);
+	        	weapon = WeaponContainer.getWeapon(death.getMetadata("FPSexplosion").get(0).asString().split(":")[1]);
 	        } else if (lastDamageCause.getCause() == DamageCause.FALL){
 	        	weapon = null;
 	        	killer = player;
@@ -91,7 +89,6 @@ public class DeathListener implements Listener {
             	} else {
             	}
 	        } 
-	        
 	        if (!(weapon == null)){
 	        	if (message == null){
 				    if (!death.getName().equals(killer.getName())){

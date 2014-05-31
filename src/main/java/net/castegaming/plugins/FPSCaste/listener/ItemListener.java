@@ -30,7 +30,11 @@ public class ItemListener implements Listener {
 	
 	@EventHandler
 	public void ItemDropEvent(PlayerDropItemEvent e){  
-		if (FPSCaste.getFPSPlayer(e.getPlayer().getName()).isIngame() && !FPSCaste.getFPSPlayer(e.getPlayer().getName()).isFrozen()){
+		if (FPSCaste.getFPSPlayer(e.getPlayer().getName()).isIngame()){
+			if (FPSCaste.getFPSPlayer(e.getPlayer().getName()).isFrozen()){
+				e.setCancelled(true); return;
+			}
+			
 			if (e.getPlayer().getItemInHand().getType().equals(Material.AIR)){
 				e.getPlayer().getInventory().setItemInHand(e.getItemDrop().getItemStack());
 			} else {
@@ -38,8 +42,6 @@ public class ItemListener implements Listener {
 			}
 			e.getItemDrop().remove();
 			FPSCaste.getFPSPlayer(e.getPlayer().getName()).reload();
-		} else {
-			e.setCancelled(true);
 		}
 	}
 	

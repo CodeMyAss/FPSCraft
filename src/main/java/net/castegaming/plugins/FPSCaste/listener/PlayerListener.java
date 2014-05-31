@@ -133,7 +133,7 @@ public class PlayerListener implements Listener {
 			if (runners.containsKey(name)) removeRunning(name);
 			
 			player.zoomOut();
-			scheduleStamina(name, e.isSprinting() ? 5 : 15, !e.isSprinting());
+			scheduleStamina(name, e.isSprinting() ? 5 : 10, !e.isSprinting());
 		}
 	}
 	
