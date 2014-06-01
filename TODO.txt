@@ -22,7 +22,6 @@ Bugs:
 - equipment
 - default settings loading per weapon
 - counter first value = %counter
-- joining a match after it restarted and before the dragontimer ended causes the timer to start another time
 ----------------------------
 
 Beta:

@@ -116,6 +116,11 @@ public class Match {
 	 * scheduler for the end time broadcast *as a fix*
 	 */
 	private int finaltime_scheduler;
+	
+	/**
+	 * 
+	 */
+	private int counterTask;
 
 	private PlayList list;
 	
@@ -244,7 +249,9 @@ public class Match {
 	 * Starts the countdown for the start of the game
 	 */
 	void startPlayCountdown(){
-		if (state.equals(gameState.PREGAME))Counter("Starting in %counter seconds!", "Starting now!", switchWaidTime, "startGame");
+		if (state.equals(gameState.PREGAME)){
+			Counter("Starting in %counter seconds!", "Starting now!", switchWaidTime, "startGame");
+		}
 	}
 	
 	/**
@@ -486,7 +493,7 @@ public class Match {
 		} 
 		System.out.println("currentplayers="+currentPlayers);
 		//enderdragon timer
-		if (currentPlayers == 1 && state.equals(gameState.PREGAME)){
+		if (currentPlayers == 1 && state.equals(gameState.PREGAME) && counterTask == -1){
 			startPlayCountdown();
 		}
 		mode.playerJoin( playername);
@@ -1014,16 +1021,22 @@ public class Match {
 	 * @param runnable The method to run when the counting is done
 	 */
 	private void Counter(final String used, final String done, final int time, final Runnable runnable) {
+		if (counterTask != -1){
+			Bukkit.getServer().getScheduler().cancelTask(counterTask);
+			FPSCaste.log("Cancelled counter task " + done + " for " + this.toString());
+		}
+		
 		for (String name : getPlayers().keySet()){
 			FPSCaste.getFPSPlayer(name).createTimer(time, used, done);
 		}
 		
-		new BukkitRunnable() {
+		counterTask = new BukkitRunnable() {
 			@Override
 			public void run() {
+				counterTask = -1;
 				runnable.run(); 
 			}
-		}.runTaskLater(FPSCaste.getInstance(), time*20);
+		}.runTaskLater(FPSCaste.getInstance(), time*20).getTaskId();
 	}
 	
 	@Override
