@@ -136,7 +136,7 @@ public class FPSPlayer {
 	 * The task ID for the reloading<br/>
 	 * If its -1 its not reloading
 	 */
-	private int reloading = -1;
+	//private int reloading = -1;
 	
 	private boolean buildingMode = false;
 
@@ -619,10 +619,11 @@ public class FPSPlayer {
 	}
 	
 	public void useRight(boolean uses) {
-		
+		//TODO rewrite
 		if (getWeapon() != null){
 			if (uses){
 				if (getWeapon().isGun() && canShoot()){
+					stopReloading();
 					if (getWeapon().getBullets() < 2){
 						if (getWeapon().isEmpty()){
 							 if (getWeapon().getMagezines() > 0){
@@ -681,7 +682,11 @@ public class FPSPlayer {
 	 * @return true or false
 	 */
 	public boolean isReloading() {
-		return reloading > -1;
+		for (Weapon w: getclass().getWeapons()){
+			if (w != null && w.isReloading()) return true;
+		}
+		
+		return false;
 	}
 
 	/**
@@ -944,9 +949,7 @@ public class FPSPlayer {
 	 */
 	public void handleRightClick() {
 		getMatch().handleRightClickNear(player);
-		if (getWeapon() != null){
-			useRight();
-		}
+		useRight();
 	}
 	
 	/**
@@ -1300,11 +1303,11 @@ public class FPSPlayer {
 	 */
 	public void stopReloading() {
 		if (isReloading()){
-			Weapon w = getWeapon(reloading);
-			if (w != null){
-				w.stopReload();
+			for (Weapon w : getclass().getWeapons()){
+				if (w != null){
+					w.stopReload();
+				}
 			}
-			reloading = -1;
 		}
 	}
 
@@ -1314,10 +1317,10 @@ public class FPSPlayer {
 	 */
 	public void reload() {
 		if (getWeapon() != null && getWeapon().getMagezines() > 0){
-			stopReloading();
 			
-			reloading = getPlayer().getInventory().getHeldItemSlot();
+			//reloading = getPlayer().getInventory().getHeldItemSlot();
 			if (getWeapon().canReload() && getWeapon().needsReload()){
+				stopReloading();
 				getWeapon().reload();
 				goodMsg("Reloading...");
 				zoomOut();

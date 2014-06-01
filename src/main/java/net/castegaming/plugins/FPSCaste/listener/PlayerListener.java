@@ -6,6 +6,7 @@ import java.util.List;
 
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.FPSPlayer;
+import net.castegaming.plugins.FPSCaste.enums.BreakableBlocks;
 import net.castegaming.plugins.FPSCaste.enums.gameState;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
 
@@ -49,25 +50,20 @@ public class PlayerListener implements Listener {
 							return;
 						}
 						
-						//prevent shooting/trowing things
-						if (e.getItem() != null){
-							Material type = e.getItem().getType();
-							if (type.equals(Material.EGG) || type.equals(Material.ENDER_PEARL) || type.equals(Material.SNOW_BALL) || type.equals(Material.PAINTING)){
-								e.setCancelled(true);
-							}
+						if (!player.canBuild()) {
+							e.setCancelled(true);
+							
+							//handle right click
+							player.handleRightClick();
 						}
-						
-						//handle right click
-						player.handleRightClick();
 					//left clicked
 					} else if (e.getAction().equals(Action.LEFT_CLICK_AIR) || e.getAction().equals(Action.LEFT_CLICK_BLOCK)){
 						if (!player.canBuild()){
 							if(e.getClickedBlock() != null){
-								if (e.getClickedBlock().getType().equals(Material.GLASS)){
+								try { 
+									BreakableBlocks.valueOf(e.getClickedBlock().getType().name());
 									player.getMatch().break3Blocks(e.getClickedBlock());
-								} else {
-									player.useLeft();
-								}
+								} catch (IllegalArgumentException ex){ player.useLeft();}
 							} else {
 								player.useLeft();
 							}

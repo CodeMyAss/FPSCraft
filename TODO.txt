@@ -17,7 +17,6 @@ Alpha:
 
 Bugs:
 - one map in playlist glitches
-- eating a weapon
 - running on full results in empty
 - die -> reload -> leave -> join -> gear lost
 - equipment

@@ -2,7 +2,7 @@ package net.castegaming.plugins.FPSCaste.listener;
 
 import net.castegaming.plugins.FPSCaste.FPSCaste;
 import net.castegaming.plugins.FPSCaste.FPSPlayer;
-import net.castegaming.plugins.FPSCaste.enums.breakableBlocks;
+import net.castegaming.plugins.FPSCaste.enums.BreakableBlocks;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Special;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
 import net.castegaming.plugins.FPSCaste.util.Explosion;
@@ -59,7 +59,7 @@ public class EntityDamageListener implements Listener {
 					    	arrow.remove();
 					    } else {
 					    	try {
-						    	breakableBlocks.valueOf(hitBlock.getType().toString());
+						    	BreakableBlocks.valueOf(hitBlock.getType().toString());
 						    	player.getMatch().break3Blocks(hitBlock);
 						    	arrow.remove();
 						    	

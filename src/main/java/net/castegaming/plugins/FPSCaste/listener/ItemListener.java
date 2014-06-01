@@ -41,6 +41,7 @@ public class ItemListener implements Listener {
 				e.getPlayer().getItemInHand().setAmount(e.getPlayer().getItemInHand().getAmount()+1);
 			}
 			e.getItemDrop().remove();
+			
 			FPSCaste.getFPSPlayer(e.getPlayer().getName()).reload();
 		}
 	}

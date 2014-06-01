@@ -16,7 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.kitteh.tag.TagAPI;
 
 import net.castegaming.plugins.FPSCaste.enums.Points;
-import net.castegaming.plugins.FPSCaste.enums.breakableBlocks;
+import net.castegaming.plugins.FPSCaste.enums.BreakableBlocks;
 import net.castegaming.plugins.FPSCaste.enums.gameState;
 import net.castegaming.plugins.FPSCaste.enums.gameType;
 import net.castegaming.plugins.FPSCaste.enums.teamName;
@@ -649,7 +649,7 @@ public class Match {
 	 */
 	public void breakOneBlock(Block hitBlock) {
 		try{
-			breakableBlocks.valueOf(hitBlock.getType().toString());
+			BreakableBlocks.valueOf(hitBlock.getType().toString());
 			brokenBlocks.put(hitBlock, hitBlock.getType());
 			hitBlock.getWorld().playEffect(hitBlock.getLocation(), Effect.STEP_SOUND, hitBlock.getType());
 			hitBlock.setType(Material.AIR);

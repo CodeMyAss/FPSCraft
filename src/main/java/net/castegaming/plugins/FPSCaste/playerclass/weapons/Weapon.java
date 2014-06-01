@@ -240,7 +240,6 @@ public class Weapon {
 	 */
 	public void reload() {
 		if (canReload()){
-			System.out.println("reload");
 			take();
 			reloadTask =  Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(FPSCaste.getInstance(), new Runnable() {
 				
@@ -259,6 +258,7 @@ public class Weapon {
 	public void stopReload() {
 		if (isReloading()){
 			Bukkit.getServer().getScheduler().cancelTask(reloadTask);
+			reloadTask = -1;
 			giveBack();
 		}
 	}
