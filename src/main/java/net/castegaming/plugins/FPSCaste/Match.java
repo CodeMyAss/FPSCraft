@@ -120,7 +120,7 @@ public class Match {
 	/**
 	 * 
 	 */
-	private int counterTask;
+	private int counterTask = -1;
 
 	private PlayList list;
 	

@@ -22,7 +22,9 @@ import net.castegaming.plugins.FPSCaste.playerclass.PlayerClass;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Gun;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.InitWeapons;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.Special;
+import net.castegaming.plugins.FPSCaste.playerclass.weapons.Weapon;
 import net.castegaming.plugins.FPSCaste.playerclass.weapons.WeaponContainer;
+import net.castegaming.plugins.FPSCaste.playerclass.weapons.custom.Knife;
 import net.castegaming.plugins.FPSCaste.util.TimeUtil;
 
 public class RegisterConfigs {
@@ -147,10 +149,12 @@ public class RegisterConfigs {
 	}
 	
 	private void loadWeapons() {
-		//TODO load from file
-		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 0, 1.0, new HashMap<String, Object>());
-		new Special(WeaponContainer.getNextIDAvailable(), "TnT", GunClass.SPECIAL, "NO-GROUP", 0, 30.0, 0, 0, new HashMap<String, Object>());
 		new InitWeapons(plugin);
+		
+		//TODO load from file
+		new Knife(WeaponContainer.getNextIDAvailable(), "Knife", GunClass.REST, "NO-GROUP", 0, 20.0);
+		new Gun(WeaponContainer.getNextIDAvailable(), "Default weapon", GunClass.PRIMARY, "NO-GROUP", 1, 5.0, new HashMap<String, Object>());
+		new Special(WeaponContainer.getNextIDAvailable(), "TnT", GunClass.REST, "NO-GROUP", 0, 30.0, 0, 0, new HashMap<String, Object>());
 	}
 	
 	private void loadDefaultClasses() {

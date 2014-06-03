@@ -13,7 +13,8 @@ public enum GunClass {
 	PRIMARY(0, Gun.class), 
 	SECONDARY(1, Gun.class),
 	SPECIAL(8, Special.class),
-	EQUIPMENT(9, Equipment.class);
+	EQUIPMENT(9, Equipment.class), 
+	REST(-1, null);
 	
 	int slot;
 	Class<? extends WeaponContainer> instance;
@@ -46,19 +47,4 @@ public enum GunClass {
 	public Class<? extends WeaponContainer> getGunClass(){
 		return instance;
 	}
-
-	public WeaponContainer newInstance() {
-		try {
-			return instance.newInstance();
-		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return null;
-	}
-
 }

@@ -108,6 +108,8 @@ public class EntityDamageListener implements Listener {
 			String[] meta = defender.getPlayer().getMetadata("FPSexplosion").get(0).asString().split(":");
 			weapon = WeaponContainer.getWeapon(meta[0]);
 			damage = Double.parseDouble(meta[1]);
+			attacker = FPSCaste.getFPSPlayer(meta[2]);
+			
 			defender.getPlayer().removeMetadata("FPSexplosion", FPSCaste.getInstance());
 		} else if (e.getDamager() instanceof Player) {
 			// Fist attack
