@@ -2,8 +2,8 @@ Grenadier:
  weapons:
   Famas: ["Grenade launcher"]
   Spas 12: ["Silencer"]
- equipment: Grenade
- special: Stun
+  Grenade: []
+  Stun: []
  perks: ["Scavenger", "Stopping Power", "Commando"]
  deathstreak: Copycat
  level: 1 
@@ -13,8 +13,8 @@ First Recon:
  weapons:
   Ump45: ["Holographic"]
   ',44 Magnum': ["Knife"]
- equipment: Semtex
- special: Flash
+  Semtex: []
+  Flash: []
  perks: ["Marathon", "Lightweight", "Steady Aim"]
  deathstreak: Copycat
  level: 1
@@ -24,8 +24,9 @@ Overwatch:
  weapons:
   L86 LSW: ["Red dot", "Grip"]
   AT4: []
- equipment: Semtex
- special: Flash
+  ',44 Magnum': ["Knife"]
+  Semtex: []
+  Flash: []
  perks: ["Bling", "Stopping Power", "Steady Aim"]
  deathstreak: Painkiller
  level: 1
@@ -35,8 +36,8 @@ Scout Sniper:
  weapons:
   'Barrett ,50 cal': ["Hearthbeat", "FMJ"]
   'Usp ,45': ["Silencer"]
- equipment: Tactical Insertion
- special: Smoke
+  Tactical Insertion: []
+  Smoke: []
  perks: ["Sleight of Hand", "Coldblooded", "Scrambler"]
  deathstreak: Copycat
  level: 2
@@ -46,8 +47,8 @@ Riot Control:
  weapons:
   Riot Shield: []
   PP2000: ["Red dot"]
- equipment: Blast Shield
- special: Stun
+  Blast Shield: []
+  Stun: []
  perks: ["Marathon", "Hardline", "Commando"]
  deathstreak: Painkiller Deathstreak
  level: 3

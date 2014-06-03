@@ -128,17 +128,9 @@ public class PlayerClass {
 			minlevel = config.getInt("level", 1);
 			
 			//load weapons
-			for (String weaponName : config.getConfigurationSection("weapons").getKeys(false)){
-				weaponName = weaponName.replace(',', '.');
-				WeaponContainer container = WeaponContainer.getWeapon(weaponName);
-				if (container == null){
-					FPSCaste.log("playerclass " + classname + ": Could not find weapon " + weaponName);
-					container = WeaponContainer.getWeapon("Default");
-				}
-				Weapon w = new Weapon(container);
-				w.addAttachments(config.getStringList("weapons." + weaponName));
-				weapons[w.getSlot()] = w;
-				initWeapons[w.getSlot()] = w;
+			ConfigurationSection section = config.getConfigurationSection("weapons");
+			for (String weaponName : section.getKeys(false)){
+				loadWeapon(section, weaponName);
 			}
 			
 			//load killstreaks
@@ -158,6 +150,25 @@ public class PlayerClass {
 				defaultClasses.put(classname, this);
 			}
 		}
+	}
+
+	/**
+	 * @param config
+	 * @param weaponName
+	 * @return
+	 */
+	private String loadWeapon(ConfigurationSection config, String weaponName) {
+		weaponName = weaponName.replace(',', '.');
+		WeaponContainer container = WeaponContainer.getWeapon(weaponName);
+		if (container == null){
+			FPSCaste.log("playerclass " + classname + ": Could not find weapon " + weaponName);
+			container = WeaponContainer.getWeapon("Default");
+		}
+		Weapon w = new Weapon(container);
+		w.addAttachments(config.getStringList(weaponName));
+		weapons[w.getSlot()] = w;
+		initWeapons[w.getSlot()] = w;
+		return weaponName;
 	}
 	
 	/**

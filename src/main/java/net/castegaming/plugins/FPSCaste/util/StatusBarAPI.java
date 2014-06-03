@@ -153,8 +153,8 @@ public class StatusBarAPI {
      * @param loadUp
      */
     public static void displayLoadingBar(final String text, final String completeText, final Player player, final int healthAdd, final long delay, final boolean loadUp){
-    	setStatusBar(player, text, loadUp ? 0 : 1);
     	final int MAX = 300;
+    	setStatusBar(player, text.replace("%counter", loadUp ? "0" : "" + (MAX / healthAdd)), loadUp ? 0 : 1);
     	
 		new BukkitRunnable(){
 			int health = (loadUp ? healthAdd : MAX-healthAdd);
