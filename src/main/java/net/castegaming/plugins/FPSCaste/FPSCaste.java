@@ -104,7 +104,7 @@ public class FPSCaste extends JavaPlugin{
 			
 			loadMatches();
 			
-			if (getServer().getOnlinePlayers().length > 0){
+			if (getServer().getOnlinePlayers().size() > 0){
 				log("Parsing all online players!");
 				for (Player p : getServer().getOnlinePlayers()){
 					new FPSPlayer(p.getName());

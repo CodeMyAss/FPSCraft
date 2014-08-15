@@ -19,7 +19,7 @@ Bugs:
 - one map in playlist glitches
 - running on full results in empty
 - die -> reload -> leave -> join -> gear lost
-- default settings loading per weapon
+- default settings loading to config per weapon
 ----------------------------
 
 Beta:

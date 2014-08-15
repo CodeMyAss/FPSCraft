@@ -1,6 +1,7 @@
 package net.castegaming.plugins.FPSCaste.killstreaks.gui;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -26,9 +27,9 @@ public class NameSelector extends GUI{
 		ItemMeta meta = item.getItemMeta();
 		meta.setLore(Arrays.asList(getClicktext()));
 		
-		Player[] players = Bukkit.getServer().getOnlinePlayers();
+		Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
 		int start = 0;
-		if (players.length > max_slots-2){
+		if (players.size() > max_slots-2){
 			if (pages.containsKey(getPlayer())){
 				start = pages.get(getPlayer())*max_slots;
 			}
@@ -40,17 +41,17 @@ public class NameSelector extends GUI{
 			item.setItemMeta(meta);
 			inv.setItem(max_slots-8, item);
 		} 
-		if (players.length > start+max_slots-2){
+		if (players.size() > start+max_slots-2){
 			meta.setDisplayName(ChatColor.GOLD + "Next");
 			item.setItemMeta(meta);
 			inv.setItem(max_slots, item);
 		}
 		
 		for (int i=start; i<start+max_slots; i++){
-			if (players.length <= i) break;
+			if (players.size() <= i) break;
 			//display start or end, so no player
-			if (!((start != 0 && i==max_slots-9) || (players.length > start+max_slots && i==max_slots))){
-				meta.setDisplayName(players[i].getName());
+			if (!((start != 0 && i==max_slots-9) || (players.size() > start+max_slots && i==max_slots))){
+				meta.setDisplayName(players.toArray(new Player[0])[i].getName());
 				item.setItemMeta(meta);
 				inv.setItem(i, item);
 			}

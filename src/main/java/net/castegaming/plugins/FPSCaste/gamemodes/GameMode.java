@@ -250,7 +250,7 @@ public abstract class GameMode {
 	public boolean isFinished(){
 		return ended;
 	}
-	
+	 
 	/**
 	 * Returns why this match has ended
 	 * @return
@@ -296,11 +296,11 @@ public abstract class GameMode {
 		object.setDisplayName(ChatColor.GOLD + "Points");
 		
 		if (scoreMax > -1){
-			object.getScore(Bukkit.getOfflinePlayer(c1 + "Limit:")).setScore(scoreMax);
+			object.getScore(c1 + "Limit:").setScore(scoreMax);
 		}
 		
-		object.getScore(Bukkit.getOfflinePlayer(c2 + "Allies:")).setScore(points.get(teamName.ALLIES));
-		object.getScore(Bukkit.getOfflinePlayer(c3 + "Axis:")).setScore(points.get(teamName.AXIS));
+		object.getScore(c2 + "Allies:").setScore(points.get(teamName.ALLIES));
+		object.getScore(c3 + "Axis:").setScore(points.get(teamName.AXIS));
 	
 		boards.put(team, board);
 	}
@@ -313,10 +313,10 @@ public abstract class GameMode {
 		teamName t1 = teamName.AXIS;
 		if (team.equals(teamName.AXIS)) t1 = teamName.ALLIES;
 		
-		boards.get(team).getObjective(DisplaySlot.SIDEBAR).getScore(Bukkit.getOfflinePlayer(ChatColor.GREEN + team.toString() + ":")).setScore(points.get(team));
-		boards.get(t1).getObjective(DisplaySlot.SIDEBAR).getScore(Bukkit.getOfflinePlayer(ChatColor.DARK_RED + team.toString() + ":")).setScore(points.get(team));
+		boards.get(team).getObjective(DisplaySlot.SIDEBAR).getScore(ChatColor.GREEN + team.toString() + ":").setScore(points.get(team));
+		boards.get(t1).getObjective(DisplaySlot.SIDEBAR).getScore(ChatColor.DARK_RED + team.toString() + ":").setScore(points.get(team));
 		
-		boards.get(teamName.SPECTATOR).getObjective(DisplaySlot.SIDEBAR).getScore(Bukkit.getOfflinePlayer(ChatColor.GRAY + team.toString() + ":")).setScore(points.get(team));
+		boards.get(teamName.SPECTATOR).getObjective(DisplaySlot.SIDEBAR).getScore(ChatColor.GRAY + team.toString() + ":").setScore(points.get(team));
 	}
 	
 	/**
